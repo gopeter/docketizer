@@ -1,0 +1,558 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		4596E5C12D9C3BE200502D23 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4596E5A82D9C3BE000502D23 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4596E5AF2D9C3BE000502D23;
+			remoteInfo = docketizer;
+		};
+		4596E5CB2D9C3BE200502D23 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4596E5A82D9C3BE000502D23 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4596E5AF2D9C3BE000502D23;
+			remoteInfo = docketizer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		4596E5B02D9C3BE000502D23 /* docketizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = docketizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4596E5C02D9C3BE200502D23 /* docketizerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		4596E5B22D9C3BE000502D23 /* docketizer */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docketizer;
+			sourceTree = "<group>";
+		};
+		4596E5C32D9C3BE200502D23 /* docketizerTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docketizerTests;
+			sourceTree = "<group>";
+		};
+		4596E5CD2D9C3BE200502D23 /* docketizerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docketizerUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4596E5AD2D9C3BE000502D23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5BD2D9C3BE200502D23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5C72D9C3BE200502D23 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		4596E5A72D9C3BE000502D23 = {
+			isa = PBXGroup;
+			children = (
+				4596E5B22D9C3BE000502D23 /* docketizer */,
+				4596E5C32D9C3BE200502D23 /* docketizerTests */,
+				4596E5CD2D9C3BE200502D23 /* docketizerUITests */,
+				4596E5B12D9C3BE000502D23 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		4596E5B12D9C3BE000502D23 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4596E5B02D9C3BE000502D23 /* docketizer.app */,
+				4596E5C02D9C3BE200502D23 /* docketizerTests.xctest */,
+				4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4596E5AF2D9C3BE000502D23 /* docketizer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4596E5D42D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizer" */;
+			buildPhases = (
+				4596E5AC2D9C3BE000502D23 /* Sources */,
+				4596E5AD2D9C3BE000502D23 /* Frameworks */,
+				4596E5AE2D9C3BE000502D23 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4596E5B22D9C3BE000502D23 /* docketizer */,
+			);
+			name = docketizer;
+			packageProductDependencies = (
+			);
+			productName = docketizer;
+			productReference = 4596E5B02D9C3BE000502D23 /* docketizer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4596E5BF2D9C3BE200502D23 /* docketizerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4596E5D72D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizerTests" */;
+			buildPhases = (
+				4596E5BC2D9C3BE200502D23 /* Sources */,
+				4596E5BD2D9C3BE200502D23 /* Frameworks */,
+				4596E5BE2D9C3BE200502D23 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4596E5C22D9C3BE200502D23 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4596E5C32D9C3BE200502D23 /* docketizerTests */,
+			);
+			name = docketizerTests;
+			packageProductDependencies = (
+			);
+			productName = docketizerTests;
+			productReference = 4596E5C02D9C3BE200502D23 /* docketizerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		4596E5C92D9C3BE200502D23 /* docketizerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4596E5DA2D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizerUITests" */;
+			buildPhases = (
+				4596E5C62D9C3BE200502D23 /* Sources */,
+				4596E5C72D9C3BE200502D23 /* Frameworks */,
+				4596E5C82D9C3BE200502D23 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4596E5CC2D9C3BE200502D23 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				4596E5CD2D9C3BE200502D23 /* docketizerUITests */,
+			);
+			name = docketizerUITests;
+			packageProductDependencies = (
+			);
+			productName = docketizerUITests;
+			productReference = 4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4596E5A82D9C3BE000502D23 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+				TargetAttributes = {
+					4596E5AF2D9C3BE000502D23 = {
+						CreatedOnToolsVersion = 16.3;
+					};
+					4596E5BF2D9C3BE200502D23 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 4596E5AF2D9C3BE000502D23;
+					};
+					4596E5C92D9C3BE200502D23 = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = 4596E5AF2D9C3BE000502D23;
+					};
+				};
+			};
+			buildConfigurationList = 4596E5AB2D9C3BE000502D23 /* Build configuration list for PBXProject "docketizer" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4596E5A72D9C3BE000502D23;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 4596E5B12D9C3BE000502D23 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4596E5AF2D9C3BE000502D23 /* docketizer */,
+				4596E5BF2D9C3BE200502D23 /* docketizerTests */,
+				4596E5C92D9C3BE200502D23 /* docketizerUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4596E5AE2D9C3BE000502D23 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5BE2D9C3BE200502D23 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5C82D9C3BE200502D23 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4596E5AC2D9C3BE000502D23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5BC2D9C3BE200502D23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4596E5C62D9C3BE200502D23 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4596E5C22D9C3BE200502D23 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4596E5AF2D9C3BE000502D23 /* docketizer */;
+			targetProxy = 4596E5C12D9C3BE200502D23 /* PBXContainerItemProxy */;
+		};
+		4596E5CC2D9C3BE200502D23 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4596E5AF2D9C3BE000502D23 /* docketizer */;
+			targetProxy = 4596E5CB2D9C3BE200502D23 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4596E5D22D9C3BE200502D23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4596E5D32D9C3BE200502D23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = JU865Y955R;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		4596E5D52D9C3BE200502D23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = docketizer/docketizer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4596E5D62D9C3BE200502D23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = docketizer/docketizer.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		4596E5D82D9C3BE200502D23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/docketizer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/docketizer";
+			};
+			name = Debug;
+		};
+		4596E5D92D9C3BE200502D23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/docketizer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/docketizer";
+			};
+			name = Release;
+		};
+		4596E5DB2D9C3BE200502D23 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = docketizer;
+			};
+			name = Debug;
+		};
+		4596E5DC2D9C3BE200502D23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = JU865Y955R;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.docket.docketizerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = docketizer;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4596E5AB2D9C3BE000502D23 /* Build configuration list for PBXProject "docketizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4596E5D22D9C3BE200502D23 /* Debug */,
+				4596E5D32D9C3BE200502D23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4596E5D42D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4596E5D52D9C3BE200502D23 /* Debug */,
+				4596E5D62D9C3BE200502D23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4596E5D72D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4596E5D82D9C3BE200502D23 /* Debug */,
+				4596E5D92D9C3BE200502D23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4596E5DA2D9C3BE200502D23 /* Build configuration list for PBXNativeTarget "docketizerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4596E5DB2D9C3BE200502D23 /* Debug */,
+				4596E5DC2D9C3BE200502D23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4596E5A82D9C3BE000502D23 /* Project object */;
+}
