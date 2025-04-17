@@ -1,0 +1,41 @@
+{
+    "schemaNamespace": "docketAPI",
+    "input": {
+        "operationSearchPaths": [
+            "**/*.graphql"
+        ],
+        "schemaSearchPaths": [
+            "**/*.graphqls"
+        ]
+    },
+    "output": {
+        "testMocks": {
+            "none": {}
+        },
+        "schemaTypes": {
+            "path": "./docketAPI",
+            "moduleType": {
+                "swiftPackageManager": {}
+            }
+        },
+        "operations": {
+            "inSchemaModule": {}
+        }
+    },
+    "schemaDownloadConfiguration": {
+        "downloadMethod": {
+            "introspection": {
+                "endpointURL":
+                    "https://debd.docket.dev:3000/graphql",
+                "httpMethod": {
+                    "POST": {}
+                },
+                "includeDeprecatedInputValues": false,
+                "outputFormat": "SDL"
+            }
+        },
+        "downloadTimeout": 60,
+        "headers": [],
+        "outputPath": "./graphql/schema.graphqls"
+    }
+}

@@ -1,0 +1,8 @@
+mutation CreateTimetracking($input: CreateTimetrackingInput!) {
+  createTimetracking(input: $input) {
+    timetracking {
+      id
+    }
+    errors
+  }
+}

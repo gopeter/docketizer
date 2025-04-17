@@ -6,6 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4596E6002D9D718700502D23 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4596E5FF2D9D718500502D23 /* README.md */; };
+		459B06DB2DAE577E00A2642B /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 459B06DA2DAE577E00A2642B /* .swift-format */; };
+		459B06E52DB0004600A2642B /* SwiftDotenv in Frameworks */ = {isa = PBXBuildFile; productRef = 459B06E42DB0004600A2642B /* SwiftDotenv */; };
+		459B06E72DB0019B00A2642B /* development.env in Resources */ = {isa = PBXBuildFile; fileRef = 459B06E62DB0019900A2642B /* development.env */; };
+		45BF212B2D9D780400728042 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF212A2D9D780400728042 /* Apollo */; };
+		45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF212C2D9D780400728042 /* ApolloWebSocket */; };
+		45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF213A2D9D7CFA00728042 /* DocketAPI */; };
+		45F4F34A2DB1301E00C54472 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 45F4F3492DB1301A00C54472 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		4596E5C12D9C3BE200502D23 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +38,15 @@
 		4596E5B02D9C3BE000502D23 /* docketizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = docketizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4596E5C02D9C3BE200502D23 /* docketizerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4596E5FF2D9D718500502D23 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		459B06DA2DAE577E00A2642B /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-format"; sourceTree = "<group>"; };
+		459B06E22DAFE34700A2642B /* CreateTimetracking.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateTimetracking.graphql; sourceTree = "<group>"; };
+		459B06E62DB0019900A2642B /* development.env */ = {isa = PBXFileReference; lastKnownFileType = text; path = development.env; sourceTree = "<group>"; };
+		45BF21332D9D7AF700728042 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
+		45BF21342D9D7BB000728042 /* schema.graphqls */ = {isa = PBXFileReference; lastKnownFileType = text; path = schema.graphqls; sourceTree = "<group>"; };
+		45BF21362D9D7C0300728042 /* Viewer.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = Viewer.graphql; sourceTree = "<group>"; };
+		45BF21372D9D7CA200728042 /* docketAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = docketAPI; sourceTree = "<group>"; };
+		45F4F3492DB1301A00C54472 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,6 +65,11 @@
 			path = docketizerUITests;
 			sourceTree = "<group>";
 		};
+		45BF212E2D9D7A6F00728042 /* bin */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = bin;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +77,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				459B06E52DB0004600A2642B /* SwiftDotenv in Frameworks */,
+				45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */,
+				45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */,
+				45BF212B2D9D780400728042 /* Apollo in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,10 +104,19 @@
 		4596E5A72D9C3BE000502D23 = {
 			isa = PBXGroup;
 			children = (
+				45BF212E2D9D7A6F00728042 /* bin */,
+				45BF21372D9D7CA200728042 /* docketAPI */,
 				4596E5B22D9C3BE000502D23 /* docketizer */,
 				4596E5C32D9C3BE200502D23 /* docketizerTests */,
 				4596E5CD2D9C3BE200502D23 /* docketizerUITests */,
+				45BF21352D9D7BB000728042 /* graphql */,
+				45BF21392D9D7CFA00728042 /* Frameworks */,
 				4596E5B12D9C3BE000502D23 /* Products */,
+				459B06DA2DAE577E00A2642B /* .swift-format */,
+				459B06E62DB0019900A2642B /* development.env */,
+				45F4F3492DB1301A00C54472 /* .gitignore */,
+				45BF21332D9D7AF700728042 /* apollo-codegen-config.json */,
+				4596E5FF2D9D718500502D23 /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -90,6 +128,23 @@
 				4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		45BF21352D9D7BB000728042 /* graphql */ = {
+			isa = PBXGroup;
+			children = (
+				459B06E22DAFE34700A2642B /* CreateTimetracking.graphql */,
+				45BF21342D9D7BB000728042 /* schema.graphqls */,
+				45BF21362D9D7C0300728042 /* Viewer.graphql */,
+			);
+			path = graphql;
+			sourceTree = "<group>";
+		};
+		45BF21392D9D7CFA00728042 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -109,9 +164,14 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4596E5B22D9C3BE000502D23 /* docketizer */,
+				45BF212E2D9D7A6F00728042 /* bin */,
 			);
 			name = docketizer;
 			packageProductDependencies = (
+				45BF212A2D9D780400728042 /* Apollo */,
+				45BF212C2D9D780400728042 /* ApolloWebSocket */,
+				45BF213A2D9D7CFA00728042 /* DocketAPI */,
+				459B06E42DB0004600A2642B /* SwiftDotenv */,
 			);
 			productName = docketizer;
 			productReference = 4596E5B02D9C3BE000502D23 /* docketizer.app */;
@@ -195,6 +255,11 @@
 			);
 			mainGroup = 4596E5A72D9C3BE000502D23;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */,
+				45BF21382D9D7CE100728042 /* XCLocalSwiftPackageReference "docketAPI" */,
+				459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4596E5B12D9C3BE000502D23 /* Products */;
 			projectDirPath = "";
@@ -212,6 +277,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				459B06E72DB0019B00A2642B /* development.env in Resources */,
+				459B06DB2DAE577E00A2642B /* .swift-format in Resources */,
+				4596E6002D9D718700502D23 /* README.md in Resources */,
+				45F4F34A2DB1301E00C54472 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -553,6 +622,54 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		45BF21382D9D7CE100728042 /* XCLocalSwiftPackageReference "docketAPI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = docketAPI;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thebarndog/swift-dotenv.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.1.0;
+			};
+		};
+		45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apollographql/apollo-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.19.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		459B06E42DB0004600A2642B /* SwiftDotenv */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */;
+			productName = SwiftDotenv;
+		};
+		45BF212A2D9D780400728042 /* Apollo */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = Apollo;
+		};
+		45BF212C2D9D780400728042 /* ApolloWebSocket */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */;
+			productName = ApolloWebSocket;
+		};
+		45BF213A2D9D7CFA00728042 /* DocketAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DocketAPI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 4596E5A82D9C3BE000502D23 /* Project object */;
 }
