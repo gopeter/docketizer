@@ -27,6 +27,7 @@ enum FocusedField {
 struct ContentView: View {
     @State private var sidebarView: SidebarView = .list
     @State private var settings = Settings()
+    @State private var showDatePicker = false
 
     @StateObject var viewModel: ContentViewModel
 
@@ -41,11 +42,17 @@ struct ContentView: View {
 
         HStack(alignment: .top, spacing: 0) {
             VStack(alignment: .leading) {
-                Text("Add timetracking")
-                    .font(.callout)
-                    .bold()
-                    .foregroundStyle(.secondary)
-                    .padding(.bottom, 5)
+                HStack(alignment: .top, spacing: 2) {
+                    Text("Add timetracking for")
+                        .font(.callout)
+                        .bold()
+                        .foregroundStyle(.secondary)
+                        .padding(.top, 3)
+                        
+
+                    DatePickerField(date: $viewModel.selectedDate)
+                }
+                .padding(.bottom, 5)
 
                 Form {
                     TextField(
@@ -97,7 +104,7 @@ struct ContentView: View {
 
                     Button("Add timetracking") {
                         viewModel.createTimetracking()
-                        
+
                         viewModel.duration = ""
                         viewModel.description = ""
                         focusedField = .duration
@@ -147,18 +154,21 @@ struct ContentView: View {
         .onAppear {
             focusedField = .duration
         }
+        .onCalendarDayChanged {
+            viewModel.selectedDate = Date()
+        }
     }
 
     @ViewBuilder private func ticketLabelFormatter(for ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket, isSelected: Bool) -> some View {
         Text("\(ticket.project.pnr) \(ticket.project.title)").font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
         Text(ticket.title).font(.callout)
     }
-    
+
     private func getSelectionIndex() -> Int {
         for (index, ticket) in viewModel.recentTicketsFiltered.enumerated() where viewModel.ticketSelectionRecentlyId == ticket.id {
             return index
         }
-        
+
         return 0
     }
 
@@ -183,7 +193,7 @@ extension ContentView {
     @ViewBuilder var timetrackingList: some View {
         if viewModel.timetrackings.count > 0 {
             HStack {
-                Text("Timetrackings today")
+                Text(isToday(viewModel.selectedDate) ? "Timetrackings today" : "Timetrackings")
                     .font(.callout)
                     .bold()
                     .foregroundStyle(.secondary)
@@ -213,9 +223,9 @@ extension ContentView {
                                 Text(timetracking.ticket.title)
                                     .font(.callout)
                             }
-                            
+
                             Spacer()
-                            
+
                             Text("\(TimeHelper.formatMinutesToHours(timetracking.duration)) h")
                                 .font(.callout)
                         }
@@ -235,10 +245,15 @@ extension ContentView {
             ContentUnavailableView {
                 Label("No Trackings", systemImage: "tray.fill").font(.title3)
             } description: {
-                Text("Your tracked times for today will appear here")
+                Text(isToday(viewModel.selectedDate) ? "Your tracked times for today will appear here" : "No tracked times for this date")
             }
         }
     }
+
+    private func isToday(_ date: Date) -> Bool {
+        Calendar.current.isDateInToday(date)
+    }
+
 }
 
 #Preview {

@@ -6,6 +6,7 @@
 //
 
 import Apollo
+import Combine
 import DocketAPI
 import Foundation
 
@@ -18,22 +19,24 @@ enum TicketView {
 class ContentViewModel: ObservableObject {
     @Published var ticketView: TicketView = .recently
 
+    @Published var selectedDate: Date = Date()
+
     @Published var duration: String = ""
     @Published var description: String = ""
 
     // we want to hold the state for all ticket selection options to not loose it if the user switches between recently, assigned and all
-    @Published private var ticketSelectionRecentlyId: String? = nil
-    @Published private var ticketSelectionRecentlyProjectId: String? = nil
+    @Published var ticketSelectionRecentlyId: String? = nil
+    @Published var ticketSelectionRecentlyProjectId: String? = nil
     @Published var ticketSelectionRecentlyLabel: String? = nil
 
-    @Published private var ticketSelectionAssignedId: String? = nil
-    @Published private var ticketSelectionAssignedProjectId: String? = nil
+    @Published var ticketSelectionAssignedId: String? = nil
+    @Published var ticketSelectionAssignedProjectId: String? = nil
     @Published var ticketSelectionAssignedLabel: String? = nil
 
-    @Published private var ticketSelectionAllProjectId: String? = nil
+    @Published var ticketSelectionAllProjectId: String? = nil
     @Published var ticketSelectionAllProjectLabel: String? = nil
 
-    @Published private var ticketSelectionAllTicketId: String? = nil
+    @Published var ticketSelectionAllTicketId: String? = nil
     @Published var ticketSelectionAllTicketLabel: String? = nil
 
     private var recentTickets: [ViewerQuery.Data.Viewer.RecentlyTrackedTicket] = []
@@ -45,17 +48,24 @@ class ContentViewModel: ObservableObject {
     @Published var isSubmitEnabled: Bool = true
 
     private var currentUser: ViewerQuery.Data.Viewer? = nil
+    private var cancellables = Set<AnyCancellable>()
 
     init() {
         queryTimetracking()
+
+        // Watch for date changes and reload timetracking
+        $selectedDate
+            .dropFirst()  // Skip initial value
+            .sink { [weak self] _ in
+                self?.queryTimetracking()
+            }
+            .store(in: &cancellables)
     }
 
     public func queryTimetracking() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
-
-        let currentDate = Date()
-        let formattedDate = dateFormatter.string(from: currentDate)
+        let formattedDate = dateFormatter.string(from: selectedDate)
 
         Apollo.shared.client().fetch(query: ViewerQuery(date: formattedDate)) { [weak self] result in
             guard let self = self else {
@@ -90,9 +100,14 @@ class ContentViewModel: ObservableObject {
 
     public func createTimetracking() {
         let ids = getSelectedTicketId()
+
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let formattedDate = dateFormatter.string(from: selectedDate)
+
         let createTimetrackingInput = CreateTimetrackingInput(
             duration: GraphQLNullable.some(Double(TimeHelper.formatHoursToMinutes(duration))),
-            date: "2025-04-17",
+            date: GraphQLNullable.some(formattedDate),
             description: GraphQLNullable.some(description),
             userId: currentUser?.id ?? nil,
             serviceId: currentUser?.expertise?.id ?? nil,

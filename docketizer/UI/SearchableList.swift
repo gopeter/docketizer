@@ -20,7 +20,8 @@ struct SearchableList<Item: Hashable, Label: View>: View {
     var select: (_ ticket: Item) -> Void
     var close: () -> Void
     var placeholder: String
-
+    var defaultSelection: Int?
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(placeholder, text: $search)
@@ -44,6 +45,7 @@ struct SearchableList<Item: Hashable, Label: View>: View {
                 }
                 .onKeyPress(.return) {
                     select(items[selection])
+                    filter("")
                     return .handled
                 }
                 .onKeyPress(.escape) {
@@ -76,6 +78,7 @@ struct SearchableList<Item: Hashable, Label: View>: View {
                             .onTapGesture {
                                 selection = index
                                 select(item)
+                                filter("")
                             }
                             .padding(.bottom, (index == items.endIndex - 1) ? 0 : 5)
                             .id(index)
@@ -86,6 +89,10 @@ struct SearchableList<Item: Hashable, Label: View>: View {
                 .onChange(of: selection) { oldValue, newValue in
                     proxy.scrollTo(newValue, anchor: .center)
                 }
+            }
+        }.onAppear {
+            if defaultSelection != nil {
+                selection = defaultSelection!
             }
         }
     }
