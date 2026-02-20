@@ -14,7 +14,7 @@ struct RootView: View {
         if apiKey == nil {
             LoginView().frame(width: 300)
         } else {
-            ContentView().frame(width: 600, height: 300)
+            ContentView().frame(width: 640, height: 300)
         }
     }
 }

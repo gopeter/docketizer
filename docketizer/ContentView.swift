@@ -37,8 +37,6 @@ struct ContentView: View {
     }
 
     var body: some View {
-        let foo = print(viewModel.errorMessage)
-
         let isSubmitButtonDisabled = viewModel.duration == "" || viewModel.getSelectedTicketId()[0] == nil
 
         HStack(alignment: .top, spacing: 0) {
@@ -92,7 +90,7 @@ struct ContentView: View {
                     TextField(
                         "Description",
                         text: $viewModel.description,
-                        prompt: Text("What did you work on?")
+                        prompt: Text("What have you been working on?")
                     )
                     .textFieldStyle(.roundedBorder)
                     .focused($focusedField, equals: .description)
@@ -123,7 +121,7 @@ struct ContentView: View {
                 }
             }
             .padding(16)
-            .frame(width: 300)
+            .frame(width: 340)
 
             VStack(alignment: .leading) {
                 if sidebarView == .list {
@@ -136,6 +134,7 @@ struct ContentView: View {
                         select: selectRecentTicket,
                         close: close,
                         placeholder: "Search tickets",
+                        defaultSelection: getSelectionIndex()
                     )
                 }
 
@@ -153,6 +152,14 @@ struct ContentView: View {
     @ViewBuilder private func ticketLabelFormatter(for ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket, isSelected: Bool) -> some View {
         Text("\(ticket.project.pnr) \(ticket.project.title)").font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
         Text(ticket.title).font(.callout)
+    }
+    
+    private func getSelectionIndex() -> Int {
+        for (index, ticket) in viewModel.recentTicketsFiltered.enumerated() where viewModel.ticketSelectionRecentlyId == ticket.id {
+            return index
+        }
+        
+        return 0
     }
 
     private func selectRecentTicket(ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket) {
@@ -216,7 +223,7 @@ extension ContentView {
                         if index < viewModel.timetrackings.count - 1 {
                             Divider()
                                 .frame(height: 1)
-                                .background(.quaternary)
+                                .background(.quinary)
                                 .padding(.vertical, 2)
                         }
                     }
@@ -251,6 +258,6 @@ extension ContentView {
         UserDefaults.standard.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
         UserDefaults.standard.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
 
-        return ContentView().frame(width: 600, height: 300)
+        return ContentView().frame(width: 640, height: 300)
     }
 }
