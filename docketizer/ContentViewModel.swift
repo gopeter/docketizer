@@ -67,7 +67,12 @@ class ContentViewModel: ObservableObject {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let formattedDate = dateFormatter.string(from: selectedDate)
 
-        Apollo.shared.client().fetch(query: ViewerQuery(date: formattedDate)) { [weak self] result in
+        guard let client = Apollo.shared.client() else {
+            self.errorMessage = "Authentication missing. Please log in again."
+            return
+        }
+
+        client.fetch(query: ViewerQuery(date: formattedDate)) { [weak self] result in
             guard let self = self else {
                 return
             }
@@ -115,7 +120,13 @@ class ContentViewModel: ObservableObject {
             ticketId: GraphQLNullable.some(ids[0]!)
         )
 
-        Apollo.shared.client().perform(mutation: CreateTimetrackingMutation(input: createTimetrackingInput)) { [weak self] result in
+        guard let client = Apollo.shared.client() else {
+            self.errorMessage = "Authentication missing. Please log in again."
+            self.isSubmitEnabled = true
+            return
+        }
+
+        client.perform(mutation: CreateTimetrackingMutation(input: createTimetrackingInput)) { [weak self] result in
             defer {
                 self?.isSubmitEnabled = true
             }

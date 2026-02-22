@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct RootView: View {
-    @AppStorage("apiKey") var apiKey: String?
-    
+    @AppStorage("apiKey", store: AppDefaults.shared) var apiKey: String?
+    @AppStorage("tenant", store: AppDefaults.shared) var tenant: String?
+
     var body: some View {
-        if apiKey == nil {
-            LoginView().frame(width: 300)
-        } else {
-            ContentView().frame(width: 640, height: 300)
+        Group {
+            if apiKey == nil || tenant == nil {
+                LoginView().frame(width: 300)
+            } else {
+                ContentView()
+                    .frame(width: 640, height: 300)
+                    .onAppear {
+                        Task { await AuthManager.shared.refreshIfNeeded() }
+                    }
+            }
         }
     }
 }

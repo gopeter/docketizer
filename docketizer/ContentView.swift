@@ -48,7 +48,6 @@ struct ContentView: View {
                         .bold()
                         .foregroundStyle(.secondary)
                         .padding(.top, 3)
-                        
 
                     DatePickerField(date: $viewModel.selectedDate)
                 }
@@ -116,6 +115,7 @@ struct ContentView: View {
                 Divider()
 
                 HStack {
+
                     Button("Logout", systemImage: "door.left.hand.open") {
                         logout()
                     }.buttonStyle(.borderless)
@@ -184,8 +184,7 @@ struct ContentView: View {
     }
 
     private func logout() {
-        settings.apiKey = nil
-        settings.tenant = nil
+        AuthManager.shared.logout()
     }
 }
 
@@ -270,8 +269,8 @@ extension ContentView {
     if Dotenv["DOCKET_API_KEY"]?.stringValue == nil || Dotenv["DOCKET_TENANT"]?.stringValue == nil {
         return Text("Please add DOCKET_API_KEY and DOCKET_TENANT to your development.env")
     } else {
-        UserDefaults.standard.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
-        UserDefaults.standard.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
+        AppDefaults.shared.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
+        AppDefaults.shared.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
 
         return ContentView().frame(width: 640, height: 300)
     }

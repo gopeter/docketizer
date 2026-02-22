@@ -7,17 +7,12 @@
 
 import SwiftUI
 
-struct LoginResponse: Codable {
-    let auth_token: String
-}
-
 struct LoginView: View {
     @State var tenant: String = ""
     @State var email: String = ""
     @State var password: String = ""
     @State var errors: String = ""
-
-    @State var settings = Settings()
+    @State var isLoading: Bool = false
 
     var body: some View {
         Form {
@@ -29,59 +24,37 @@ struct LoginView: View {
                 Text(errors).padding(.vertical)
             }
 
-            Button("Login") {
-                login()
+            Button(action: { Task { await login() } }) {
+                HStack(spacing: 6) {
+                    if isLoading {
+                        ProgressView()
+                            .controlSize(.small)
+                            .frame(width: 12, height: 12)
+                    }
+                    Text(isLoading ? "Logging in …" : "Login")
+                }
             }
-        }.padding()
+            .disabled(isLoading)
+        }
+        .onSubmit {
+            guard !isLoading else { return }
+            Task { await login() }
+        }
+        .padding()
     }
 
-    private func login() {
+    private func login() async {
         errors = ""
+        isLoading = true
+        defer { isLoading = false }
 
-        guard let url = URL(string: "https://\(tenant).godocket.app/api/login")
-        else {
-            errors = "Invalid docket URL"
-            return
+        do {
+            try await AuthManager.shared.login(tenant: tenant, email: email, password: password)
+        } catch AuthError.invalidCredentials {
+            errors = "User not found or password wrong, please try again"
+        } catch {
+            errors = "An error occurred, please try again"
         }
-
-        let payload = ["email": email, "password": password]
-        guard
-            let jsonData = try? JSONSerialization.data(withJSONObject: payload)
-        else {
-            errors = "Error while handling user input"
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if error != nil {
-                errors = "User not found or password wrong, please try again"
-                return
-            }
-
-            if data == nil {
-                errors = "Error while handling server response"
-                return
-            }
-
-            do {
-                let decodedResponse = try JSONDecoder().decode(
-                    LoginResponse.self,
-                    from: data!
-                )
-
-                settings.apiKey = decodedResponse.auth_token
-                settings.tenant = tenant
-            } catch {
-                errors = "Error while handling server response"
-                return
-            }
-
-        }.resume()
     }
 }
 
