@@ -73,32 +73,34 @@ class ContentViewModel: ObservableObject {
         }
 
         client.fetch(query: ViewerQuery(date: formattedDate)) { [weak self] result in
-            guard let self = self else {
-                return
-            }
-
-            switch result {
-            case .success(let graphQLResult):
-                if let viewer = graphQLResult.data?.viewer {
-                    self.currentUser = viewer
+            DispatchQueue.main.async {
+                guard let self = self else {
+                    return
                 }
 
-                if let timetrackingNodes = graphQLResult.data?.viewer.timetrackings.nodes {
-                    self.timetrackings = []
-                    self.timetrackings.append(contentsOf: timetrackingNodes.compactMap({ $0 }))
-                }
+                switch result {
+                case .success(let graphQLResult):
+                    if let viewer = graphQLResult.data?.viewer {
+                        self.currentUser = viewer
+                    }
 
-                if let recentTickets = graphQLResult.data?.viewer.recentlyTrackedTickets {
-                    self.recentTickets = []
-                    self.recentTickets.append(contentsOf: recentTickets.compactMap({ $0 }))
-                    self.filterRecentTickets(by: "")
-                }
+                    if let timetrackingNodes = graphQLResult.data?.viewer.timetrackings.nodes {
+                        self.timetrackings = []
+                        self.timetrackings.append(contentsOf: timetrackingNodes.compactMap({ $0 }))
+                    }
 
-                if let errors = graphQLResult.errors {
-                    self.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+                    if let recentTickets = graphQLResult.data?.viewer.recentlyTrackedTickets {
+                        self.recentTickets = []
+                        self.recentTickets.append(contentsOf: recentTickets.compactMap({ $0 }))
+                        self.filterRecentTickets(by: "")
+                    }
+
+                    if let errors = graphQLResult.errors {
+                        self.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+                    }
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
                 }
-            case .failure(let error):
-                self.errorMessage = error.localizedDescription
             }
         }
     }
@@ -127,19 +129,21 @@ class ContentViewModel: ObservableObject {
         }
 
         client.perform(mutation: CreateTimetrackingMutation(input: createTimetrackingInput)) { [weak self] result in
-            defer {
-                self?.isSubmitEnabled = true
-            }
-
-            switch result {
-            case .success(let graphQLResult):
-                self?.queryTimetracking()
-
-                if let errors = graphQLResult.errors {
-                    self?.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+            DispatchQueue.main.async {
+                defer {
+                    self?.isSubmitEnabled = true
                 }
-            case .failure(let error):
-                self?.errorMessage = error.localizedDescription
+
+                switch result {
+                case .success(let graphQLResult):
+                    self?.queryTimetracking()
+
+                    if let errors = graphQLResult.errors {
+                        self?.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+                    }
+                case .failure(let error):
+                    self?.errorMessage = error.localizedDescription
+                }
             }
         }
     }
