@@ -54,18 +54,25 @@ class ContentViewModel: ObservableObject {
         queryTimetracking()
 
         // Watch for date changes and reload timetracking
+        // Note: @Published fires with willSet semantics, so self.selectedDate is still
+        // the OLD value inside the sink – we must use the new value passed as the argument.
         $selectedDate
             .dropFirst()  // Skip initial value
-            .sink { [weak self] _ in
-                self?.queryTimetracking()
+            .sink { [weak self] newDate in
+                // Defer to next run loop cycle to avoid "publishing changes from within
+                // view updates" – @Published fires synchronously during willSet, which
+                // happens inside a SwiftUI view update when the binding is written.
+                DispatchQueue.main.async {
+                    self?.queryTimetracking(for: newDate)
+                }
             }
             .store(in: &cancellables)
     }
 
-    public func queryTimetracking() {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let formattedDate = dateFormatter.string(from: selectedDate)
+    public func queryTimetracking(for date: Date? = nil) {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date ?? selectedDate)
+        let formattedDate = String(format: "%04d-%02d-%02d", components.year!, components.month!, components.day!)
 
         guard let client = Apollo.shared.client() else {
             self.errorMessage = "Authentication missing. Please log in again."
@@ -108,9 +115,9 @@ class ContentViewModel: ObservableObject {
     public func createTimetracking() {
         let ids = getSelectedTicketId()
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let formattedDate = dateFormatter.string(from: selectedDate)
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: selectedDate)
+        let formattedDate = String(format: "%04d-%02d-%02d", components.year!, components.month!, components.day!)
 
         let createTimetrackingInput = CreateTimetrackingInput(
             duration: GraphQLNullable.some(Double(TimeHelper.formatHoursToMinutes(duration))),

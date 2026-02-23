@@ -59,6 +59,7 @@ private struct NativeDatePicker: NSViewRepresentable {
         picker.dateValue = date
         picker.font = font
         picker.textColor = color
+        picker.timeZone = .current
         picker.isBordered = false
         picker.isBezeled = false
         picker.drawsBackground = false
@@ -102,6 +103,7 @@ private struct GraphicalDatePicker: NSViewRepresentable {
         picker.dateValue = date
         picker.locale = Locale.current
         picker.calendar = Calendar.current
+        picker.timeZone = .current
         picker.target = context.coordinator
         picker.action = #selector(Coordinator.dateChanged(_:))
         return picker

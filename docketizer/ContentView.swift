@@ -5,6 +5,7 @@
 //  Created by Peter Oesteritz on 01.04.25.
 //
 
+import AppKit
 import DocketAPI
 import Foundation
 import SwiftDotenv
@@ -42,16 +43,8 @@ struct ContentView: View {
 
         HStack(alignment: .top, spacing: 0) {
             VStack(alignment: .leading) {
-                HStack(alignment: .top, spacing: 2) {
-                    Text("Add timetracking for")
-                        .font(.callout)
-                        .bold()
-                        .foregroundStyle(.secondary)
-                        .padding(.top, 3)
-
-                    DatePickerField(date: $viewModel.selectedDate)
-                }
-                .padding(.bottom, 5)
+                WeekNavigator(selectedDate: $viewModel.selectedDate)
+                    .padding(.bottom, 16)
 
                 Form {
                     TextField(
@@ -63,7 +56,7 @@ struct ContentView: View {
                     .padding(.bottom, 5)
                     .focused($focusedField, equals: .duration)
 
-                    Picker("Ticket", selection: $viewModel.ticketView) {
+                    Picker("Ticket", selection: $viewModel.ticketView.deferred()) {
                         Text("Recently").tag(TicketView.recently)
                         Text("Assigned").tag(TicketView.assigned)
                         Text("All").tag(TicketView.all)
@@ -107,7 +100,10 @@ struct ContentView: View {
                         viewModel.duration = ""
                         viewModel.description = ""
                         focusedField = .duration
-                    }.buttonStyle(.borderedProminent).disabled(isSubmitButtonDisabled)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(isSubmitButtonDisabled)
+                    .tint(isSubmitButtonDisabled ? .secondary : .accentColor)
                 }
 
                 Spacer()
@@ -152,7 +148,9 @@ struct ContentView: View {
             .background(.black.opacity(0.2))
         }
         .onAppear {
-            focusedField = .duration
+            Task { @MainActor in
+                focusedField = .duration
+            }
         }
         .onCalendarDayChanged {
             viewModel.selectedDate = Date()
@@ -192,15 +190,25 @@ extension ContentView {
     @ViewBuilder var timetrackingList: some View {
         if viewModel.timetrackings.count > 0 {
             HStack {
-                Text(isToday(viewModel.selectedDate) ? "Timetrackings today" : "Timetrackings")
+                Text("Timetrackings")
                     .font(.callout)
                     .bold()
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 5)
 
+                Button {
+                    openWebInterface()
+                } label: {
+                    Image(systemName: "arrow.up.forward.square")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+                .padding(.bottom, 5)
+
                 Spacer()
 
-                Text("\(TimeHelper.formatMinutesToHours(viewModel.timetrackings.reduce(0, { $0 + $1.duration }))) h").font(.callout)
+                Text("\(TimeHelper.formatMinutesToHours(viewModel.timetrackings.reduce(0, { $0 + $1.duration }))) h").font(.callout)
                     .bold()
                     .foregroundStyle(.secondary)
                     .padding(.bottom, 5)
@@ -251,6 +259,16 @@ extension ContentView {
 
     private func isToday(_ date: Date) -> Bool {
         Calendar.current.isDateInToday(date)
+    }
+
+    private func openWebInterface() {
+        let domain = ProcessInfo.processInfo.environment["DOCKET_URL"] ?? "godocket.app"
+        guard
+            let tenant = AppDefaults.tenant,
+            let url = URL(string: "https://\(tenant).\(domain)/timetracking")
+        else { return }
+
+        NSWorkspace.shared.open(url)
     }
 
 }
