@@ -1,0 +1,9 @@
+query Projects {
+    projects {
+        nodes {
+            id
+            title
+            pnr
+        }
+    }
+}

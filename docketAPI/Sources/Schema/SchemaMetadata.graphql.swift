@@ -44,6 +44,7 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "OrderConfirmationComment": return DocketAPI.Objects.OrderConfirmationComment
     case "Phase": return DocketAPI.Objects.Phase
     case "Project": return DocketAPI.Objects.Project
+    case "ProjectConnection": return DocketAPI.Objects.ProjectConnection
     case "ProjectLabel": return DocketAPI.Objects.ProjectLabel
     case "Query": return DocketAPI.Objects.Query
     case "Quotation": return DocketAPI.Objects.Quotation
@@ -62,6 +63,7 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "Ticket": return DocketAPI.Objects.Ticket
     case "TicketAssignment": return DocketAPI.Objects.TicketAssignment
     case "TicketComment": return DocketAPI.Objects.TicketComment
+    case "TicketConnection": return DocketAPI.Objects.TicketConnection
     case "Timetracking": return DocketAPI.Objects.Timetracking
     case "TimetrackingConnection": return DocketAPI.Objects.TimetrackingConnection
     case "User": return DocketAPI.Objects.User

@@ -16,7 +16,7 @@ enum SidebarView {
     case recentTickets
     case assignedTickets
     case allProjects
-    case projectTickets
+    case allProjectTickets
 }
 
 enum FocusedField {
@@ -80,10 +80,70 @@ struct ContentView: View {
                             sidebarView == .recentTickets ? RoundedRectangle(cornerRadius: 4).stroke(Color.accentColor, lineWidth: 2) : nil
                         )
                         .focused($focusedField, equals: .ticket)
+
                     } else if viewModel.ticketView.hashValue == TicketView.assigned.hashValue {
-                        Text("Foo")
+                        Button {
+                            if sidebarView == .assignedTickets {
+                                sidebarView = .list
+                            } else {
+                                sidebarView = .assignedTickets
+                            }
+                        } label: {
+                            HStack {
+                                Text(viewModel.ticketSelectionAssignedLabel ?? "Select ticket")
+                                Spacer()
+                                Image(systemName: "chevron.right.square.fill").symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                        .overlay(
+                            sidebarView == .assignedTickets ? RoundedRectangle(cornerRadius: 4).stroke(Color.accentColor, lineWidth: 2) : nil
+                        )
+                        .focused($focusedField, equals: .ticket)
+
                     } else {
-                        Text("Bar")
+                        // All: two-step – project first, then ticket
+                        VStack(spacing: 6) {
+                            Button {
+                                if sidebarView == .allProjects {
+                                    sidebarView = .list
+                                } else {
+                                    sidebarView = .allProjects
+                                    // reset to project list when re-opening
+                                }
+                            } label: {
+                                HStack {
+                                    Text(viewModel.ticketSelectionAllProjectLabel ?? "Select project")
+                                    Spacer()
+                                    Image(systemName: "chevron.right.square.fill").symbolRenderingMode(.hierarchical)
+                                }
+                            }
+                            .overlay(
+                                sidebarView == .allProjects ? RoundedRectangle(cornerRadius: 4).stroke(Color.accentColor, lineWidth: 2) : nil
+                            )
+
+                            Button {
+                                guard viewModel.ticketSelectionAllProjectId != nil else { return }
+                                if sidebarView == .allProjectTickets {
+                                    sidebarView = .list
+                                } else {
+                                    sidebarView = .allProjectTickets
+                                }
+                            } label: {
+                                HStack {
+                                    Text(viewModel.ticketSelectionAllTicketLabel ?? "Select ticket")
+                                        .foregroundStyle(viewModel.ticketSelectionAllProjectId == nil ? .secondary : .primary)
+                                    Spacer()
+                                    Image(systemName: "chevron.right.square.fill")
+                                        .symbolRenderingMode(.hierarchical)
+                                        .foregroundStyle(viewModel.ticketSelectionAllProjectId == nil ? .secondary : .primary)
+                                }
+                            }
+                            .disabled(viewModel.ticketSelectionAllProjectId == nil)
+                            .overlay(
+                                sidebarView == .allProjectTickets ? RoundedRectangle(cornerRadius: 4).stroke(Color.accentColor, lineWidth: 2) : nil
+                            )
+                            .focused($focusedField, equals: .ticket)
+                        }
                     }
 
                     TextField(
@@ -111,7 +171,6 @@ struct ContentView: View {
                 Divider()
 
                 HStack {
-
                     Button("Logout", systemImage: "door.left.hand.open") {
                         logout()
                     }.buttonStyle(.borderless)
@@ -129,15 +188,49 @@ struct ContentView: View {
             VStack(alignment: .leading) {
                 if sidebarView == .list {
                     timetrackingList
+
                 } else if sidebarView == .recentTickets {
                     SearchableList(
                         items: viewModel.recentTicketsFiltered,
                         filter: viewModel.filterRecentTickets,
-                        labelFormatter: ticketLabelFormatter,
+                        labelFormatter: recentTicketLabelFormatter,
                         select: selectRecentTicket,
                         close: close,
                         placeholder: "Search tickets",
-                        defaultSelection: getSelectionIndex()
+                        defaultSelection: getRecentSelectionIndex()
+                    )
+
+                } else if sidebarView == .assignedTickets {
+                    SearchableList(
+                        items: viewModel.assignedTicketsFiltered,
+                        filter: viewModel.filterAssignedTickets,
+                        labelFormatter: assignedTicketLabelFormatter,
+                        select: selectAssignedTicket,
+                        close: close,
+                        placeholder: "Search tickets",
+                        defaultSelection: getAssignedSelectionIndex()
+                    )
+
+                } else if sidebarView == .allProjects {
+                    SearchableList(
+                        items: viewModel.projectsFiltered,
+                        filter: viewModel.filterProjects,
+                        labelFormatter: projectLabelFormatter,
+                        select: selectProject,
+                        close: close,
+                        placeholder: "Search projects",
+                        defaultSelection: getAllProjectSelectionIndex()
+                    )
+
+                } else if sidebarView == .allProjectTickets {
+                    SearchableList(
+                        items: viewModel.projectTicketsFiltered,
+                        filter: viewModel.filterProjectTickets,
+                        labelFormatter: projectTicketLabelFormatter,
+                        select: selectProjectTicket,
+                        close: close,
+                        placeholder: "Search tickets",
+                        defaultSelection: getAllTicketSelectionIndex()
                     )
                 }
 
@@ -157,21 +250,80 @@ struct ContentView: View {
         }
     }
 
-    @ViewBuilder private func ticketLabelFormatter(for ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket, isSelected: Bool) -> some View {
+    // MARK: - Label Formatters
+
+    @ViewBuilder private func recentTicketLabelFormatter(for ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket, isSelected: Bool) -> some View {
         Text("\(ticket.project.pnr) \(ticket.project.title)").font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
         Text(ticket.title).font(.callout)
     }
 
-    private func getSelectionIndex() -> Int {
+    @ViewBuilder private func assignedTicketLabelFormatter(for ticket: ViewerQuery.Data.Viewer.AssignedTickets.Node, isSelected: Bool) -> some View {
+        Text("\(ticket.project.pnr) \(ticket.project.title)").font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
+        Text(ticket.title).font(.callout)
+    }
+
+    @ViewBuilder private func projectLabelFormatter(for project: ProjectsQuery.Data.Projects.Node, isSelected: Bool) -> some View {
+        Text(project.pnr).font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
+        Text(project.title).font(.callout)
+    }
+
+    @ViewBuilder private func projectTicketLabelFormatter(for ticket: ProjectTicketsQuery.Data.Tickets.Node, isSelected: Bool) -> some View {
+        Text("\(ticket.project.pnr) \(ticket.project.title)").font(.caption).foregroundStyle(.white.opacity(isSelected ? 0.7 : 0.5))
+        Text(ticket.title).font(.callout)
+    }
+
+    // MARK: - Default Selection Indices
+
+    private func getRecentSelectionIndex() -> Int {
         for (index, ticket) in viewModel.recentTicketsFiltered.enumerated() where viewModel.ticketSelectionRecentlyId == ticket.id {
             return index
         }
-
         return 0
     }
 
+    private func getAssignedSelectionIndex() -> Int {
+        for (index, ticket) in viewModel.assignedTicketsFiltered.enumerated() where viewModel.ticketSelectionAssignedId == ticket.id {
+            return index
+        }
+        return 0
+    }
+
+    private func getAllProjectSelectionIndex() -> Int {
+        for (index, project) in viewModel.projectsFiltered.enumerated() where viewModel.ticketSelectionAllProjectId == project.id {
+            return index
+        }
+        return 0
+    }
+
+    private func getAllTicketSelectionIndex() -> Int {
+        for (index, ticket) in viewModel.projectTicketsFiltered.enumerated() where viewModel.ticketSelectionAllTicketId == ticket.id {
+            return index
+        }
+        return 0
+    }
+
+    // MARK: - Selection Handlers
+
     private func selectRecentTicket(ticket: ViewerQuery.Data.Viewer.RecentlyTrackedTicket) {
         viewModel.selectRecentTicket(ticket: ticket)
+        sidebarView = .list
+        focusedField = .description
+    }
+
+    private func selectAssignedTicket(ticket: ViewerQuery.Data.Viewer.AssignedTickets.Node) {
+        viewModel.selectAssignedTicket(ticket: ticket)
+        sidebarView = .list
+        focusedField = .description
+    }
+
+    private func selectProject(project: ProjectsQuery.Data.Projects.Node) {
+        viewModel.selectProject(project: project)
+        sidebarView = .allProjectTickets
+        focusedField = nil
+    }
+
+    private func selectProjectTicket(ticket: ProjectTicketsQuery.Data.Tickets.Node) {
+        viewModel.selectProjectTicket(ticket: ticket)
         sidebarView = .list
         focusedField = .description
     }
@@ -233,7 +385,7 @@ extension ContentView {
 
                             Spacer()
 
-                            Text("\(TimeHelper.formatMinutesToHours(timetracking.duration)) h")
+                            Text("\(TimeHelper.formatMinutesToHours(timetracking.duration)) h")
                                 .font(.callout)
                         }
 
@@ -270,7 +422,6 @@ extension ContentView {
 
         NSWorkspace.shared.open(url)
     }
-
 }
 
 #Preview {

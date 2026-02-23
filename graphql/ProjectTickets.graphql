@@ -1,0 +1,14 @@
+query ProjectTickets($projectId: ID!) {
+    tickets(filter: { projectIds: [$projectId] }) {
+        nodes {
+            id
+            title
+            number
+            project {
+                id
+                title
+                pnr
+            }
+        }
+    }
+}

@@ -8,7 +8,7 @@ Beta
 - [ ] Offline Meldung
 - [x] Refresh JWT
 - [x] Scroll zur Selected option
-- [ ] Assigned- und Projekt-Auswahl
+- [x] Assigned- und Projekt-Auswahl
 - [ ] Launch at Login
 - [ ] Tastenkürzel zum Öffnen
 - [ ] Quit einbauen

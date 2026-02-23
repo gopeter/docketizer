@@ -20,7 +20,7 @@ query Viewer($date: String!) {
                 }
             }
         }
-        recentlyTrackedTickets(count: 10) {
+        recentlyTrackedTickets(count: 30) {
             id
             title
             number
@@ -28,6 +28,18 @@ query Viewer($date: String!) {
                 id
                 title
                 pnr
+            }
+        }
+        assignedTickets(first: 30) {
+            nodes {
+                id
+                title
+                number
+                project {
+                    id
+                    title
+                    pnr
+                }
             }
         }
     }
