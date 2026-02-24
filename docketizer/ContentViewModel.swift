@@ -138,7 +138,7 @@ class ContentViewModel: ObservableObject {
             return
         }
 
-        client.fetch(query: ProjectsQuery()) { [weak self] result in
+        client.fetch(query: ProjectsQuery(), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else { return }
 
@@ -305,6 +305,7 @@ class ContentViewModel: ObservableObject {
         ticketSelectionAllProjectLabel = project.pnr + " " + project.title
 
         queryProjectTickets(for: project.id)
+
     }
 
     // MARK: - All (Project Tickets)

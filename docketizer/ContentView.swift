@@ -27,8 +27,9 @@ enum FocusedField {
 
 struct ContentView: View {
     @State private var sidebarView: SidebarView = .list
-    @State private var settings = Settings()
     @State private var showDatePicker = false
+
+    @Environment(\.openSettings) private var openSettings
 
     @StateObject var viewModel: ContentViewModel
 
@@ -42,7 +43,7 @@ struct ContentView: View {
         let isSubmitButtonDisabled = viewModel.duration == "" || viewModel.getSelectedTicketId()[0] == nil
 
         HStack(alignment: .top, spacing: 0) {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 WeekNavigator(selectedDate: $viewModel.selectedDate)
                     .padding(.bottom, 16)
 
@@ -163,7 +164,6 @@ struct ContentView: View {
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(isSubmitButtonDisabled)
-                    .tint(isSubmitButtonDisabled ? .secondary : .accentColor)
                 }
 
                 Spacer()
@@ -171,19 +171,30 @@ struct ContentView: View {
                 Divider()
 
                 HStack {
+
                     Button("Logout", systemImage: "door.left.hand.open") {
                         logout()
                     }.buttonStyle(.borderless)
 
                     Spacer()
 
-                    Button("Quit", systemImage: "power") {
-                        logout()
+                    Button {
+                        openSettings()
+                    } label: {
+                        Image(systemName: "gearshape")
                     }.buttonStyle(.borderless)
-                }
+
+                    Button {
+                        NSApplication.shared.terminate(nil)
+                    } label: {
+                        Image(systemName: "power")
+                    }.buttonStyle(.borderless)
+                }.padding(.top, 10)
+
             }
             .padding(16)
-            .frame(width: 340)
+            .frame(width: 340, alignment: .top)
+            .frame(maxHeight: .infinity, alignment: .top)
 
             VStack(alignment: .leading) {
                 if sidebarView == .list {
@@ -238,12 +249,12 @@ struct ContentView: View {
             }
             .padding(16)
             .frame(width: 300, alignment: .leading)
+            .frame(maxHeight: .infinity, alignment: .top)
             .background(.black.opacity(0.2))
         }
-        .onAppear {
-            Task { @MainActor in
-                focusedField = .duration
-            }
+        .frame(maxHeight: .infinity)
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
+            focusedField = .duration
         }
         .onCalendarDayChanged {
             viewModel.selectedDate = Date()
@@ -381,6 +392,11 @@ extension ContentView {
                                     .foregroundStyle(.white.opacity(0.5))
                                 Text(timetracking.ticket.title)
                                     .font(.callout)
+                                if let description = timetracking.description, !description.isEmpty {
+                                    Text(description)
+                                        .font(.caption)
+                                        .foregroundStyle(.white.opacity(0.5))
+                                }
                             }
 
                             Spacer()
@@ -404,7 +420,7 @@ extension ContentView {
             ContentUnavailableView {
                 Label("No Trackings", systemImage: "tray.fill").font(.title3)
             } description: {
-                Text(isToday(viewModel.selectedDate) ? "Your tracked times for today will appear here" : "No tracked times for this date")
+                Text("No tracked times for this date")
             }
         }
     }
@@ -441,6 +457,6 @@ extension ContentView {
         AppDefaults.shared.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
         AppDefaults.shared.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
 
-        return ContentView().frame(width: 640, height: 300)
+        return ContentView().frame(width: 640, height: 340)
     }
 }

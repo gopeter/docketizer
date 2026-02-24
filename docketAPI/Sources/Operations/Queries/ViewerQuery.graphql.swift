@@ -7,7 +7,7 @@ public class ViewerQuery: GraphQLQuery {
   public static let operationName: String = "Viewer"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query Viewer($date: String!) { viewer { __typename id expertise { __typename id } timetrackings(filter: { dates: [$date] }) { __typename nodes { __typename id duration ticket { __typename id number title } project { __typename id title pnr } } } recentlyTrackedTickets(count: 30) { __typename id title number project { __typename id title pnr } } assignedTickets(first: 30) { __typename nodes { __typename id title number project { __typename id title pnr } } } } }"#
+      #"query Viewer($date: String!) { viewer { __typename id expertise { __typename id } timetrackings(filter: { dates: [$date] }) { __typename nodes { __typename id duration description ticket { __typename id number title } project { __typename id title pnr } } } recentlyTrackedTickets(count: 30) { __typename id title number project { __typename id title pnr } } assignedTickets(first: 30) { __typename nodes { __typename id title number project { __typename id title pnr } } } } }"#
     ))
 
   public var date: String
@@ -96,12 +96,14 @@ public class ViewerQuery: GraphQLQuery {
             .field("__typename", String.self),
             .field("id", DocketAPI.ID.self),
             .field("duration", Double.self),
+            .field("description", String?.self),
             .field("ticket", Ticket.self),
             .field("project", Project.self),
           ] }
 
           public var id: DocketAPI.ID { __data["id"] }
           public var duration: Double { __data["duration"] }
+          public var description: String? { __data["description"] }
           public var ticket: Ticket { __data["ticket"] }
           public var project: Project { __data["project"] }
 

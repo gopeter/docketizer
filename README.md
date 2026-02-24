@@ -5,15 +5,16 @@
 
 ## Todos
 Beta
-- [ ] Offline Meldung
+- [x] Offline Meldung
 - [x] Refresh JWT
 - [x] Scroll zur Selected option
 - [x] Assigned- und Projekt-Auswahl
-- [ ] Launch at Login
-- [ ] Tastenkürzel zum Öffnen
-- [ ] Quit einbauen
+- [x] Launch at Login
+- [x] Tastenkürzel zum Öffnen
+- [x] Quit einbauen
 - [ ] Sparkle einbauen
 - [x] Tage auswählbar machen
+- [x] App Icon
 
 Wunschliste
 - [ ] Stoppuhr einbauen

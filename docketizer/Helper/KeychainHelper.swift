@@ -9,11 +9,19 @@ import Foundation
 import Security
 
 struct KeychainHelper {
-    private static let service = Bundle.main.bundleIdentifier ?? "dev.docket.docketizer"
+    #if DEBUG
+        private static let service = (Bundle.main.bundleIdentifier ?? "dev.docket.docketizer") + ".debug"
+    #else
+        private static let service = Bundle.main.bundleIdentifier ?? "dev.docket.docketizer"
+    #endif
     private static let fallbackDefaults = AppDefaults.shared
+    private static var isPreview: Bool {
+        ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+    }
 
     @discardableResult
     static func save(_ value: String, for key: String) -> Bool {
+        guard !isPreview else { return true }
         guard let data = value.data(using: .utf8) else { return false }
 
         let query: [String: Any] = [
@@ -36,6 +44,7 @@ struct KeychainHelper {
     }
 
     static func load(for key: String) -> String? {
+        guard !isPreview else { return nil }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -59,6 +68,7 @@ struct KeychainHelper {
 
     @discardableResult
     static func delete(for key: String) -> Bool {
+        guard !isPreview else { return true }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,

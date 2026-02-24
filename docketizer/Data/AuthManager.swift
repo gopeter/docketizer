@@ -121,8 +121,11 @@ class AuthManager {
                 let email,
                 let password
             else {
+                // Credentials are unavailable – do not force a logout since we have no proof
+                // they are wrong. Return a non-fatal failure so the caller surfaces a network
+                // error instead of kicking the user out.
                 lastReAuthDate = Date()
-                let result = SilentReAuthResult.failure(requiresLogin: true, error: nil)
+                let result = SilentReAuthResult.failure(requiresLogin: false, error: nil)
                 lastReAuthResult = result
                 return result
             }

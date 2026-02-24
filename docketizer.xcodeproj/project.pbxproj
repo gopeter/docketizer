@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		453124132F4DDACC00D307F6 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 453124122F4DDACC00D307F6 /* AppIcon.icon */; };
 		4596E6002D9D718700502D23 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 4596E5FF2D9D718500502D23 /* README.md */; };
 		459B06DB2DAE577E00A2642B /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 459B06DA2DAE577E00A2642B /* .swift-format */; };
 		459B06E52DB0004600A2642B /* SwiftDotenv in Frameworks */ = {isa = PBXBuildFile; productRef = 459B06E42DB0004600A2642B /* SwiftDotenv */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		453124122F4DDACC00D307F6 /* AppIcon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = AppIcon.icon; sourceTree = "<group>"; };
 		4596E5B02D9C3BE000502D23 /* docketizer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = docketizer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4596E5C02D9C3BE200502D23 /* docketizerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4596E5CA2D9C3BE200502D23 /* docketizerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = docketizerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -104,6 +106,7 @@
 		4596E5A72D9C3BE000502D23 = {
 			isa = PBXGroup;
 			children = (
+				453124122F4DDACC00D307F6 /* AppIcon.icon */,
 				45BF212E2D9D7A6F00728042 /* bin */,
 				45BF21372D9D7CA200728042 /* docketAPI */,
 				4596E5B22D9C3BE000502D23 /* docketizer */,
@@ -279,6 +282,7 @@
 			files = (
 				459B06E72DB0019B00A2642B /* development.env in Resources */,
 				459B06DB2DAE577E00A2642B /* .swift-format in Resources */,
+				453124132F4DDACC00D307F6 /* AppIcon.icon in Resources */,
 				4596E6002D9D718700502D23 /* README.md in Resources */,
 				45F4F34A2DB1301E00C54472 /* .gitignore in Resources */,
 			);
@@ -471,6 +475,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -499,6 +505,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

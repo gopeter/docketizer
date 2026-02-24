@@ -8,6 +8,7 @@ query Viewer($date: String!) {
             nodes {
                 id
                 duration
+                description
                 ticket {
                     id
                     number
