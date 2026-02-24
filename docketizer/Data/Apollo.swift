@@ -21,7 +21,7 @@ class AuthHeaderInterceptor: ApolloInterceptor {
         response: HTTPResponse<Operation>?,
         completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
     ) {
-        if let apiKey = AppDefaults.apiKey {
+        if let apiKey = UserDefaults.standard.string(forKey: "apiKey") {
             request.additionalHeaders["Authorization"] = apiKey
         }
         chain.proceedAsync(request: request, response: response, interceptor: self, completion: completion)
@@ -137,7 +137,7 @@ class Apollo {
         }
 
         guard
-            let tenant = AppDefaults.tenant,
+            let tenant = UserDefaults.standard.string(forKey: "tenant"),
             let url = URL(string: "https://\(tenant).\(domain)/graphql")
         else {
             return

@@ -45,8 +45,8 @@ class AuthManager {
         KeychainHelper.save(password, for: "password")
         KeychainHelper.save(tenant, for: "tenant")
 
-        AppDefaults.shared.set(token, forKey: "apiKey")
-        AppDefaults.shared.set(tenant, forKey: "tenant")
+        UserDefaults.standard.set(token, forKey: "apiKey")
+        UserDefaults.standard.set(tenant, forKey: "tenant")
 
         cachedTenant = tenant
         cachedEmail = email
@@ -66,8 +66,8 @@ class AuthManager {
         KeychainHelper.delete(for: "password")
         KeychainHelper.delete(for: "tenant")
 
-        AppDefaults.shared.removeObject(forKey: "apiKey")
-        AppDefaults.shared.removeObject(forKey: "tenant")
+        UserDefaults.standard.removeObject(forKey: "apiKey")
+        UserDefaults.standard.removeObject(forKey: "tenant")
 
         cachedTenant = nil
         cachedEmail = nil
@@ -84,7 +84,7 @@ class AuthManager {
     /// Returns success or failure and updates UserDefaults with the new token.
     @discardableResult
     func silentReAuth(failedToken: String? = nil, force: Bool = false) async -> SilentReAuthResult {
-        let currentToken = AppDefaults.shared.string(forKey: "apiKey")
+        let currentToken = UserDefaults.standard.string(forKey: "apiKey")
 
         // Another concurrent caller already refreshed the token – treat as success.
         if !force,
@@ -135,8 +135,8 @@ class AuthManager {
                     tenant: storedTenant, email: email, password: password
                 )
                 // Update UserDefaults so AuthHeaderInterceptor picks up the new token on retry.
-                AppDefaults.shared.set(token, forKey: "apiKey")
-                AppDefaults.shared.set(storedTenant, forKey: "tenant")
+                UserDefaults.standard.set(token, forKey: "apiKey")
+                UserDefaults.standard.set(storedTenant, forKey: "tenant")
 
                 lastReAuthDate = Date()
                 lastReAuthResult = .success
@@ -163,7 +163,7 @@ class AuthManager {
     /// within the next 5 minutes. Never logs the user out – a failed refresh here is
     /// non-fatal since the 401 interceptor will handle an actually-expired token.
     func refreshIfNeeded() async {
-        guard let currentToken = AppDefaults.shared.string(forKey: "apiKey") else { return }
+        guard let currentToken = UserDefaults.standard.string(forKey: "apiKey") else { return }
         guard let expiry = tokenExpiryDate(from: currentToken) else { return }
         guard expiry.timeIntervalSinceNow < 5 * 60 else { return }
 

@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct RootView: View {
-    @AppStorage("apiKey", store: AppDefaults.shared) var apiKey: String?
-    @AppStorage("tenant", store: AppDefaults.shared) var tenant: String?
+    @AppStorage("apiKey") var apiKey: String?
+    @AppStorage("tenant") var tenant: String?
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     var body: some View {

@@ -432,7 +432,7 @@ extension ContentView {
     private func openWebInterface() {
         let domain = ProcessInfo.processInfo.environment["DOCKET_URL"] ?? "godocket.app"
         guard
-            let tenant = AppDefaults.tenant,
+            let tenant = UserDefaults.standard.string(forKey: "tenant"),
             let url = URL(string: "https://\(tenant).\(domain)/timetracking")
         else { return }
 
@@ -454,8 +454,8 @@ extension ContentView {
     if Dotenv["DOCKET_API_KEY"]?.stringValue == nil || Dotenv["DOCKET_TENANT"]?.stringValue == nil {
         return Text("Please add DOCKET_API_KEY and DOCKET_TENANT to your development.env")
     } else {
-        AppDefaults.shared.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
-        AppDefaults.shared.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
+        UserDefaults.standard.set(Dotenv["DOCKET_API_KEY"]!.stringValue, forKey: "apiKey")
+        UserDefaults.standard.set(Dotenv["DOCKET_TENANT"]!.stringValue, forKey: "tenant")
 
         return ContentView().frame(width: 640, height: 340)
     }

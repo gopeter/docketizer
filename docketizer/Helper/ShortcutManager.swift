@@ -64,7 +64,7 @@ class ShortcutManager: ObservableObject {
 
     private func loadShortcut() {
         guard
-            let data = AppDefaults.shared.data(forKey: userDefaultsKey),
+            let data = UserDefaults.standard.data(forKey: userDefaultsKey),
             let decoded = try? JSONDecoder().decode(RecordedShortcut.self, from: data)
         else { return }
 
@@ -73,11 +73,11 @@ class ShortcutManager: ObservableObject {
 
     private func saveShortcut() {
         guard let shortcut else {
-            AppDefaults.shared.removeObject(forKey: userDefaultsKey)
+            UserDefaults.standard.removeObject(forKey: userDefaultsKey)
             return
         }
         if let encoded = try? JSONEncoder().encode(shortcut) {
-            AppDefaults.shared.set(encoded, forKey: userDefaultsKey)
+            UserDefaults.standard.set(encoded, forKey: userDefaultsKey)
         }
     }
 

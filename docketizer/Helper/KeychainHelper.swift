@@ -14,7 +14,7 @@ struct KeychainHelper {
     #else
         private static let service = Bundle.main.bundleIdentifier ?? "dev.docket.docketizer"
     #endif
-    private static let fallbackDefaults = AppDefaults.shared
+    private static let fallbackDefaults = UserDefaults.standard
     private static var isPreview: Bool {
         ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
     }
