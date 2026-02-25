@@ -46,7 +46,7 @@ struct RootView: View {
                 Text("You're offline")
                     .font(.headline)
 
-                Text("Docketizer requires an internet connection.")
+                Text("docketizer requires an internet connection.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)

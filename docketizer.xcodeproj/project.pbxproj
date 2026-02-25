@@ -16,6 +16,7 @@
 		45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF212C2D9D780400728042 /* ApolloWebSocket */; };
 		45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF213A2D9D7CFA00728042 /* DocketAPI */; };
 		45F4F34A2DB1301E00C54472 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 45F4F3492DB1301A00C54472 /* .gitignore */; };
+		45FECD032F2000000ABCDEF1 /* MenuBarExtraAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 45FECD022F2000000ABCDEF1 /* MenuBarExtraAccess */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 				45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */,
 				45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */,
 				45BF212B2D9D780400728042 /* Apollo in Frameworks */,
+				45FECD032F2000000ABCDEF1 /* MenuBarExtraAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,6 +177,7 @@
 				45BF212C2D9D780400728042 /* ApolloWebSocket */,
 				45BF213A2D9D7CFA00728042 /* DocketAPI */,
 				459B06E42DB0004600A2642B /* SwiftDotenv */,
+				45FECD022F2000000ABCDEF1 /* MenuBarExtraAccess */,
 			);
 			productName = docketizer;
 			productReference = 4596E5B02D9C3BE000502D23 /* docketizer.app */;
@@ -262,6 +265,7 @@
 				45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */,
 				45BF21382D9D7CE100728042 /* XCLocalSwiftPackageReference "docketAPI" */,
 				459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */,
+				45FECD012F2000000ABCDEF1 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4596E5B12D9C3BE000502D23 /* Products */;
@@ -655,6 +659,14 @@
 				minimumVersion = 1.19.0;
 			};
 		};
+		45FECD012F2000000ABCDEF1 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/orchetect/MenuBarExtraAccess";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -676,6 +688,11 @@
 		45BF213A2D9D7CFA00728042 /* DocketAPI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DocketAPI;
+		};
+		45FECD022F2000000ABCDEF1 /* MenuBarExtraAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45FECD012F2000000ABCDEF1 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */;
+			productName = MenuBarExtraAccess;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

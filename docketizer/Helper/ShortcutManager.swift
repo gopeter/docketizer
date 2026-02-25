@@ -29,14 +29,21 @@ class ShortcutManager: ObservableObject {
         }
     }
 
+    /// Sends a Void signal whenever the shortcut fires. The App struct listens via
+    /// `.onReceive` and toggles its own `@State isMenuPresented` – no `@ObservedObject`
+    /// in the App body, which would destroy the library's window observers on every render.
+    let toggleMenuSignal = PassthroughSubject<Void, Never>()
+
     @Published var hasAccessibilityPermission: Bool = false
 
     private var globalMonitor: Any?
+    private var localMonitor: Any?
     private let userDefaultsKey = "globalShortcut"
 
     private init() {
         loadShortcut()
         checkAccessibilityPermission()
+        registerGlobalShortcut()
     }
 
     // MARK: - Accessibility
@@ -84,34 +91,41 @@ class ShortcutManager: ObservableObject {
     // MARK: - Global Monitor
 
     func registerGlobalShortcut() {
-        // Remove existing monitor first
+        // Remove existing monitors first
         if let existing = globalMonitor {
             NSEvent.removeMonitor(existing)
             globalMonitor = nil
         }
+        if let existing = localMonitor {
+            NSEvent.removeMonitor(existing)
+            localMonitor = nil
+        }
 
         guard let shortcut, hasAccessibilityPermission else { return }
 
+        // Global monitor fires when another app is in the foreground
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: .keyDown) { [weak self] event in
             guard let self else { return }
             let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == shortcut.keyCode && flags == shortcut.eventModifiers {
-                self.toggleMenuBarWindow()
+                DispatchQueue.main.async {
+                    self.toggleMenuSignal.send()
+                }
             }
         }
-    }
 
-    private func toggleMenuBarWindow() {
-        DispatchQueue.main.async {
-            NSApp.activate(ignoringOtherApps: true)
-            // NSStatusBar.statusItems is not exposed in the Swift overlay,
-            // so we access it via KVC. The app only registers one status item.
-            if let items = NSStatusBar.system.value(forKey: "statusItems") as? [NSStatusItem],
-                let button = items.first?.button
-            {
-                button.performClick(nil)
+        // Local monitor fires when this app (i.e. the MenuBarExtra window) is in the foreground
+        localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+            if event.keyCode == shortcut.keyCode && flags == shortcut.eventModifiers {
+                DispatchQueue.main.async {
+                    self?.toggleMenuSignal.send()
+                }
+                return nil  // consume the event
             }
+            return event
         }
+
     }
 
     // MARK: - Formatting

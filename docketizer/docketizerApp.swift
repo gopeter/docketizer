@@ -6,25 +6,34 @@
 //
 
 import AppKit
+import MenuBarExtraAccess
 import SwiftUI
-
-class AppDelegate: NSObject, NSApplicationDelegate {
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        // Check accessibility permission and register global shortcut on launch
-        ShortcutManager.shared.checkAccessibilityPermission()
-        ShortcutManager.shared.registerGlobalShortcut()
-    }
-}
 
 @main
 struct docketizerApp: App {
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @State private var isMenuPresented = false
 
     var body: some Scene {
-        MenuBarExtra("Docketizer", systemImage: "clock") {
-            RootView()
-        }
+        MenuBarExtra(
+            content: {
+                RootView()
+                    .onReceive(ShortcutManager.shared.toggleMenuSignal) {
+                        isMenuPresented.toggle()
+                    }
+            },
+            label: {
+                let image: NSImage = {
+                    let ratio = $0.size.height / $0.size.width
+                    $0.size.height = 17
+                    $0.size.width = 17 / ratio
+                    return $0
+                }(NSImage(named: "favicon")!)
+
+                Image(nsImage: image)
+            }
+        )
         .menuBarExtraStyle(.window)
+        .menuBarExtraAccess(isPresented: $isMenuPresented)
 
         SwiftUI.Settings {
             SettingsView()

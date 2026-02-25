@@ -51,14 +51,14 @@ struct ShortcutRecorderButton: View {
                 stopRecording()
                 return nil
             }
-            
+
             // Delete clears the shortcut
             if event.keyCode == 51 || event.keyCode == 117 {
                 shortcut = nil
                 stopRecording()
                 return nil
             }
-            
+
             // Require at least one modifier (excluding caps lock)
             let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             let usableFlags = flags.subtracting(.capsLock)
@@ -66,10 +66,10 @@ struct ShortcutRecorderButton: View {
 
             let chars = event.charactersIgnoringModifiers ?? ""
             let display = ShortcutManager.formatShortcut(flags: usableFlags, keyCode: event.keyCode, chars: chars)
-            
+
             shortcut = RecordedShortcut(keyCode: event.keyCode, modifiers: usableFlags.rawValue, displayString: display)
             stopRecording()
-            
+
             return nil
         }
     }
@@ -107,7 +107,7 @@ struct SettingsView: View {
             }
 
             Section("Global Shortcut") {
-                LabeledContent("Open Docketizer") {
+                LabeledContent("Open docketizer") {
                     ShortcutRecorderButton(shortcut: $shortcutManager.shortcut)
                 }
 
@@ -122,7 +122,7 @@ struct SettingsView: View {
                                 .font(.callout)
                                 .fontWeight(.medium)
 
-                            Text("To use a global shortcut, Docketizer needs Accessibility access so it can detect key presses while other apps are active.")
+                            Text("To use a global shortcut, docketizer needs Accessibility access so it can detect key presses while other apps are active.")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 
@@ -131,7 +131,7 @@ struct SettingsView: View {
                                 shortcutManager.openAccessibilitySettings()
                             }
                             .padding(.top, 2)
-                            
+
                             Button("Check Again") {
                                 shortcutManager.checkAccessibilityPermission()
                                 if shortcutManager.hasAccessibilityPermission {
