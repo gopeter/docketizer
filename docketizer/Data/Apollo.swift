@@ -8,6 +8,9 @@
 import Apollo
 import ApolloAPI
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.docket.docketizer", category: "Apollo")
 
 // Reads the current auth token from UserDefaults on every request so that
 // a retried request after silent re-auth automatically uses the new token
@@ -99,6 +102,41 @@ class UnauthorizedInterceptor: ApolloInterceptor {
     }
 }
 
+// Logs any error that reaches the end of the interceptor chain so that
+// failures are visible in Console.app under the "Apollo" category.
+class ErrorLoggingInterceptor: ApolloInterceptor {
+    var id: String = "ErrorLoggingInterceptor"
+
+    func interceptAsync<Operation: GraphQLOperation>(
+        chain: RequestChain,
+        request: HTTPRequest<Operation>,
+        response: HTTPResponse<Operation>?,
+        completion: @escaping (Result<GraphQLResult<Operation.Data>, Error>) -> Void
+    ) {
+        chain.proceedAsync(request: request, response: response, interceptor: self) { result in
+            switch result {
+            case .failure(let error):
+                let statusCode = response?.httpResponse.statusCode
+                let operationName = Operation.operationName
+
+                if let statusCode {
+                    logger.error("[\(operationName)] Request failed with HTTP \(statusCode): \(error.localizedDescription)")
+                } else {
+                    logger.error("[\(operationName)] Request failed: \(error.localizedDescription)")
+                }
+            case .success(let graphQLResult):
+                if let errors = graphQLResult.errors, !errors.isEmpty {
+                    let operationName = Operation.operationName
+                    let messages = errors.map { $0.message ?? "(no message)" }.joined(separator: ", ")
+                    logger.error("[\(operationName)] GraphQL error(s): \(messages)")
+                }
+            }
+
+            completion(result)
+        }
+    }
+}
+
 class CustomInterceptorProvider: InterceptorProvider {
     private let store: ApolloStore
     private let client: URLSessionClient
@@ -118,6 +156,7 @@ class CustomInterceptorProvider: InterceptorProvider {
             UnauthorizedInterceptor(),
             ResponseCodeInterceptor(),
             JSONResponseParsingInterceptor(),
+            ErrorLoggingInterceptor(),
         ]
     }
 }
