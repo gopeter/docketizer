@@ -7,6 +7,7 @@
 
 import AppKit
 import ServiceManagement
+import Sparkle
 import SwiftUI
 
 // MARK: - Shortcut Recorder
@@ -83,9 +84,45 @@ struct ShortcutRecorderButton: View {
     }
 }
 
+// MARK: - Check for Updates
+
+final class UpdaterViewModel: ObservableObject {
+    private let updater: SPUUpdater
+
+    @Published var canCheckForUpdates = false
+
+    init(updater: SPUUpdater) {
+        self.updater = updater
+        // SPUUpdater publishes canCheckForUpdates via KVO
+        updater.publisher(for: \.canCheckForUpdates)
+            .assign(to: &$canCheckForUpdates)
+    }
+
+    func checkForUpdates() {
+        updater.checkForUpdates()
+    }
+}
+
+struct CheckForUpdatesView: View {
+    @StateObject private var viewModel: UpdaterViewModel
+
+    init(updater: SPUUpdater) {
+        _viewModel = StateObject(wrappedValue: UpdaterViewModel(updater: updater))
+    }
+
+    var body: some View {
+        Button("Check for Updates…") {
+            viewModel.checkForUpdates()
+        }
+        .disabled(!viewModel.canCheckForUpdates)
+    }
+}
+
 // MARK: - Settings View
 
 struct SettingsView: View {
+    let updater: SPUUpdater
+
     @StateObject private var shortcutManager = ShortcutManager.shared
 
     @State private var launchAtLogin: Bool = (SMAppService.mainApp.status == .enabled)
@@ -104,6 +141,8 @@ struct SettingsView: View {
                         .font(.caption)
                         .foregroundStyle(.red)
                 }
+
+                CheckForUpdatesView(updater: updater)
             }
 
             Section("Global Shortcut") {
@@ -181,5 +220,5 @@ struct SettingsView: View {
 }
 
 #Preview {
-    SettingsView()
+    SettingsView(updater: SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil).updater)
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rss
+    version="2.0"
+    xmlns:sparkle="http://www.andymatern.com/developer/sparkle/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+>
+    <channel>
+        <title>docketizer</title>
+        <link>hhttps://intern.evernow.dev/docketizer/appcast.xml</link>
+        <description>docketizer release notes and update feed</description>
+        <language>en</language>
+
+        <!--
+            To add a new release:
+
+            1. Archive and export the app (Product > Archive in Xcode)
+            2. Sign the .zip with the Sparkle sign_update tool:
+
+               ~/Library/Developer/Xcode/DerivedData/docketizer-.../SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update docketizer-1.1.0.zip
+
+               The tool prints the edSignature and length values to paste below.
+
+            3. Copy this <item> block, fill in the new version details and upload
+               the .zip + updated appcast.xml to your server.
+        -->
+
+        <item>
+            <title>Version 1.0</title>
+            <pubDate>Wed, 25 Feb 2026 21:31:00 +0000</pubDate>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description
+            ><![CDATA[
+                <h3>Initial Release</h3>
+                <ul>
+                    <li>First public release of docketizer.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://intern.evernow.dev/docketizer/releases/docketizer-1.0.zip"
+                sparkle:edSignature="SMZPYWRqm7ZaY9Z7OMZ9BN6wGbxE98jCibDndY/LT15v26uO2/I+tAKmicEpDS/qMcOJYUdp4WXQba0+4sOcBw=="
+                length="6710680"
+                type="application/octet-stream"
+            />
+        </item>
+
+    </channel>
+</rss>

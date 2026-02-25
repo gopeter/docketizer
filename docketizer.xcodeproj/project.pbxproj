@@ -12,6 +12,8 @@
 		459B06DB2DAE577E00A2642B /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 459B06DA2DAE577E00A2642B /* .swift-format */; };
 		459B06E52DB0004600A2642B /* SwiftDotenv in Frameworks */ = {isa = PBXBuildFile; productRef = 459B06E42DB0004600A2642B /* SwiftDotenv */; };
 		459B06E72DB0019B00A2642B /* development.env in Resources */ = {isa = PBXBuildFile; fileRef = 459B06E62DB0019900A2642B /* development.env */; };
+		45B1D9C42F4F89640071C5BF /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 45B1D9C32F4F89640071C5BF /* Sparkle */; };
+		45B1DAB72F4F932C0071C5BF /* appcast.xml in Resources */ = {isa = PBXBuildFile; fileRef = 45B1DAB62F4F932C0071C5BF /* appcast.xml */; };
 		45BF212B2D9D780400728042 /* Apollo in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF212A2D9D780400728042 /* Apollo */; };
 		45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF212C2D9D780400728042 /* ApolloWebSocket */; };
 		45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 45BF213A2D9D7CFA00728042 /* DocketAPI */; };
@@ -45,6 +47,7 @@
 		459B06DA2DAE577E00A2642B /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = text; path = ".swift-format"; sourceTree = "<group>"; };
 		459B06E22DAFE34700A2642B /* CreateTimetracking.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = CreateTimetracking.graphql; sourceTree = "<group>"; };
 		459B06E62DB0019900A2642B /* development.env */ = {isa = PBXFileReference; lastKnownFileType = text; path = development.env; sourceTree = "<group>"; };
+		45B1DAB62F4F932C0071C5BF /* appcast.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = appcast.xml; sourceTree = "<group>"; };
 		45BF21332D9D7AF700728042 /* apollo-codegen-config.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "apollo-codegen-config.json"; sourceTree = "<group>"; };
 		45BF21342D9D7BB000728042 /* schema.graphqls */ = {isa = PBXFileReference; lastKnownFileType = text; path = schema.graphqls; sourceTree = "<group>"; };
 		45BF21362D9D7C0300728042 /* Viewer.graphql */ = {isa = PBXFileReference; lastKnownFileType = text; path = Viewer.graphql; sourceTree = "<group>"; };
@@ -83,6 +86,7 @@
 				459B06E52DB0004600A2642B /* SwiftDotenv in Frameworks */,
 				45BF213B2D9D7CFA00728042 /* DocketAPI in Frameworks */,
 				45BF212D2D9D780400728042 /* ApolloWebSocket in Frameworks */,
+				45B1D9C42F4F89640071C5BF /* Sparkle in Frameworks */,
 				45BF212B2D9D780400728042 /* Apollo in Frameworks */,
 				45FECD032F2000000ABCDEF1 /* MenuBarExtraAccess in Frameworks */,
 			);
@@ -117,9 +121,10 @@
 				45BF21352D9D7BB000728042 /* graphql */,
 				45BF21392D9D7CFA00728042 /* Frameworks */,
 				4596E5B12D9C3BE000502D23 /* Products */,
-				459B06DA2DAE577E00A2642B /* .swift-format */,
-				459B06E62DB0019900A2642B /* development.env */,
 				45F4F3492DB1301A00C54472 /* .gitignore */,
+				459B06DA2DAE577E00A2642B /* .swift-format */,
+				45B1DAB62F4F932C0071C5BF /* appcast.xml */,
+				459B06E62DB0019900A2642B /* development.env */,
 				45BF21332D9D7AF700728042 /* apollo-codegen-config.json */,
 				4596E5FF2D9D718500502D23 /* README.md */,
 			);
@@ -178,6 +183,7 @@
 				45BF213A2D9D7CFA00728042 /* DocketAPI */,
 				459B06E42DB0004600A2642B /* SwiftDotenv */,
 				45FECD022F2000000ABCDEF1 /* MenuBarExtraAccess */,
+				45B1D9C32F4F89640071C5BF /* Sparkle */,
 			);
 			productName = docketizer;
 			productReference = 4596E5B02D9C3BE000502D23 /* docketizer.app */;
@@ -266,6 +272,7 @@
 				45BF21382D9D7CE100728042 /* XCLocalSwiftPackageReference "docketAPI" */,
 				459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */,
 				45FECD012F2000000ABCDEF1 /* XCRemoteSwiftPackageReference "MenuBarExtraAccess" */,
+				45B1D9C22F4F89640071C5BF /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4596E5B12D9C3BE000502D23 /* Products */;
@@ -285,6 +292,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				459B06E72DB0019B00A2642B /* development.env in Resources */,
+				45B1DAB72F4F932C0071C5BF /* appcast.xml in Resources */,
 				459B06DB2DAE577E00A2642B /* .swift-format in Resources */,
 				453124132F4DDACC00D307F6 /* AppIcon.icon in Resources */,
 				4596E6002D9D718700502D23 /* README.md in Resources */,
@@ -478,10 +486,7 @@
 				DEVELOPMENT_TEAM = JU865Y955R;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = docketizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -508,10 +513,7 @@
 				DEVELOPMENT_TEAM = JU865Y955R;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
-				INFOPLIST_KEY_LSUIElement = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_FILE = docketizer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -651,6 +653,14 @@
 				minimumVersion = 2.1.0;
 			};
 		};
+		45B1D9C22F4F89640071C5BF /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.9.0;
+			};
+		};
 		45BF21292D9D780400728042 /* XCRemoteSwiftPackageReference "apollo-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apollographql/apollo-ios";
@@ -674,6 +684,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 459B06E32DB0004600A2642B /* XCRemoteSwiftPackageReference "swift-dotenv" */;
 			productName = SwiftDotenv;
+		};
+		45B1D9C32F4F89640071C5BF /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45B1D9C22F4F89640071C5BF /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		45BF212A2D9D780400728042 /* Apollo */ = {
 			isa = XCSwiftPackageProductDependency;
