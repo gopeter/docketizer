@@ -174,7 +174,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				4596E5B22D9C3BE000502D23 /* docketizer */,
-				45BF212E2D9D7A6F00728042 /* bin */,
 			);
 			name = docketizer;
 			packageProductDependencies = (
