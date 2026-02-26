@@ -255,6 +255,8 @@ struct ContentView: View {
         .frame(maxHeight: .infinity)
         .onReceive(NotificationCenter.default.publisher(for: NSWindow.didBecomeKeyNotification)) { _ in
             focusedField = .duration
+            viewModel.queryTimetracking()
+            viewModel.queryProjects()
         }
         .onCalendarDayChanged {
             viewModel.selectedDate = Date()
