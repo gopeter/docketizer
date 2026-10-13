@@ -30,6 +30,8 @@ struct ContentView: View {
     @State private var showDatePicker = false
 
     @Environment(\.openSettings) private var openSettings
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @ObservedObject private var updateReminder = UpdateReminder.shared
 
     @StateObject var viewModel: ContentViewModel
 
@@ -181,6 +183,15 @@ struct ContentView: View {
                     }.buttonStyle(.borderless)
 
                     Spacer()
+
+                    if let version = updateReminder.pendingUpdateVersion {
+                        Button("Update \(version)", systemImage: "arrow.down.circle.fill") {
+                            updateReminder.showUpdate(with: appDelegate.updaterController.updater)
+                        }
+                        .buttonStyle(.borderless)
+                        .foregroundStyle(Color.accentColor)
+                        .help("A new version of docketizer is available")
+                    }
 
                     Button {
                         openSettings()

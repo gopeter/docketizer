@@ -13,9 +13,13 @@ import SwiftUI
 // MARK: - AppDelegate
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    static let shared = AppDelegate()
-
-    var updaterController: SPUStandardUpdaterController?
+    // Owned here (instead of being handed over from a view's onAppear) so it's available right at
+    // launch, e.g. for the right-click menu before the popover was ever opened.
+    let updaterController = SPUStandardUpdaterController(
+        startingUpdater: true,
+        updaterDelegate: nil,
+        userDriverDelegate: UpdateReminder.shared
+    )
     var openSettings: (() -> Void)?
 
     private var rightClickMonitor: Any?
@@ -51,13 +55,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         settingsItem.target = self
         menu.addItem(settingsItem)
 
+        let pendingVersion = UpdateReminder.shared.pendingUpdateVersion
         let updateItem = NSMenuItem(
-            title: "Check for Updates…",
+            title: pendingVersion.map { "Install Update \($0)…" } ?? "Check for Updates…",
             action: #selector(checkForUpdates),
             keyEquivalent: ""
         )
         updateItem.target = self
-        updateItem.isEnabled = updaterController?.updater.canCheckForUpdates ?? false
+        updateItem.isEnabled = updaterController.updater.canCheckForUpdates
         menu.addItem(updateItem)
 
         menu.addItem(.separator())
@@ -85,7 +90,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func checkForUpdates() {
-        updaterController?.updater.checkForUpdates()
+        UpdateReminder.shared.showUpdate(with: updaterController.updater)
     }
 }
 
@@ -95,12 +100,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 struct docketizerApp: App {
     @State private var isMenuPresented = false
 
-    private let updaterController: SPUStandardUpdaterController
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-
-    init() {
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
-    }
+    @ObservedObject private var updateReminder = UpdateReminder.shared
 
     var body: some Scene {
         MenuBarExtra(
@@ -108,9 +109,6 @@ struct docketizerApp: App {
                 RootView()
                     .onReceive(ShortcutManager.shared.toggleMenuSignal) {
                         isMenuPresented.toggle()
-                    }
-                    .onAppear {
-                        appDelegate.updaterController = updaterController
                     }
             },
             label: {
@@ -121,14 +119,37 @@ struct docketizerApp: App {
                     return $0
                 }(NSImage(named: "favicon")!)
 
-                Image(nsImage: image)
+                Image(nsImage: updateReminder.hasPendingUpdate ? Self.badged(image) : image)
             }
         )
         .menuBarExtraStyle(.window)
         .menuBarExtraAccess(isPresented: $isMenuPresented)
 
         SwiftUI.Settings {
-            SettingsView(updater: updaterController.updater)
+            SettingsView(updater: appDelegate.updaterController.updater)
         }
+    }
+
+    /// Draws a small dot into the top-right corner of the menu bar icon to signal a pending update.
+    /// MenuBarExtra labels ignore SwiftUI overlays, so the badge has to be part of the image itself.
+    /// The result stays a template image so it keeps adapting to light/dark menu bars.
+    private static func badged(_ image: NSImage) -> NSImage {
+        let badged = NSImage(size: image.size, flipped: false) { rect in
+            image.draw(in: rect)
+
+            let diameter: CGFloat = 6
+            let dot = NSRect(x: rect.maxX - diameter, y: rect.maxY - diameter, width: diameter, height: diameter)
+
+            // Cut out a small gap around the dot so it stands out from the icon
+            NSGraphicsContext.current?.compositingOperation = .clear
+            NSBezierPath(ovalIn: dot.insetBy(dx: -1.5, dy: -1.5)).fill()
+
+            NSGraphicsContext.current?.compositingOperation = .sourceOver
+            NSColor.black.setFill()
+            NSBezierPath(ovalIn: dot).fill()
+            return true
+        }
+        badged.isTemplate = true
+        return badged
     }
 }
