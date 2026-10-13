@@ -1,0 +1,17 @@
+query WorkTimes($userId: ID!, $date: ISO8601Date!) {
+    users(filter: { ids: [$userId] }) {
+        nodes {
+            workTimes(first: 1, filter: { date: $date }) {
+                nodes {
+                    mon
+                    tue
+                    wed
+                    thu
+                    fri
+                    sat
+                    sun
+                }
+            }
+        }
+    }
+}

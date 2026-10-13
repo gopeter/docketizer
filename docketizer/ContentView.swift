@@ -44,7 +44,11 @@ struct ContentView: View {
 
         HStack(alignment: .top, spacing: 0) {
             VStack(alignment: .leading, spacing: 0) {
-                WeekNavigator(selectedDate: $viewModel.selectedDate)
+                WeekNavigator(
+                    selectedDate: $viewModel.selectedDate,
+                    weekDayProgress: viewModel.weekDayProgress,
+                    onWeekChange: { viewModel.queryWeekProgress(weekStart: $0) }
+                )
                     .padding(.bottom, 16)
 
                 Form {

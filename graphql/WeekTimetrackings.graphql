@@ -1,0 +1,12 @@
+query WeekTimetrackings($dates: [String!]!) {
+    viewer {
+        id
+        timetrackings(filter: { dates: $dates }) {
+            nodes {
+                id
+                duration
+                date
+            }
+        }
+    }
+}

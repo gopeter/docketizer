@@ -9,6 +9,9 @@ import SwiftUI
 
 struct WeekNavigator: View {
     @Binding var selectedDate: Date
+    var weekDayProgress: [String: DayProgress] = [:]
+    // Called with the first day of the shown week whenever it changes (incl. initially)
+    var onWeekChange: ((Date) -> Void)? = nil
     @State private var displayedWeekStart: Date
     @FocusState private var isFocused: Bool
     @FocusState private var isPrevFocused: Bool
@@ -16,9 +19,15 @@ struct WeekNavigator: View {
 
     private let calendar = Calendar.current
 
-    init(selectedDate: Binding<Date>) {
+    init(
+        selectedDate: Binding<Date>,
+        weekDayProgress: [String: DayProgress] = [:],
+        onWeekChange: ((Date) -> Void)? = nil
+    ) {
         self._selectedDate = selectedDate
         self._displayedWeekStart = State(initialValue: Self.weekStart(for: selectedDate.wrappedValue))
+        self.weekDayProgress = weekDayProgress
+        self.onWeekChange = onWeekChange
     }
 
     private var weekDates: [Date] {
@@ -46,11 +55,13 @@ struct WeekNavigator: View {
 
             HStack(spacing: 3) {
                 ForEach(weekDates, id: \.self) { date in
+                    let dateKey = Self.dateString(from: date)
                     DayBar(
                         date: date,
                         isSelected: calendar.isDate(date, inSameDayAs: selectedDate),
                         isToday: calendar.isDateInToday(date),
-                        showFocusRing: isFocused && calendar.isDate(date, inSameDayAs: selectedDate)
+                        showFocusRing: isFocused && calendar.isDate(date, inSameDayAs: selectedDate),
+                        progress: weekDayProgress[dateKey]
                     )
                     .frame(maxWidth: .infinity)
                     .onTapGesture {
@@ -100,6 +111,14 @@ struct WeekNavigator: View {
                 displayedWeekStart = newWeekStart
             }
         }
+        .onChange(of: displayedWeekStart, initial: true) { _, newWeekStart in
+            onWeekChange?(newWeekStart)
+        }
+    }
+
+    static func dateString(from date: Date) -> String {
+        let c = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", c.year!, c.month!, c.day!)
     }
 
     static func weekStart(for date: Date) -> Date {
@@ -118,6 +137,12 @@ private struct DayBar: View {
     let isSelected: Bool
     let isToday: Bool
     var showFocusRing: Bool = false
+    // nil while work times are unknown – no progress is shown then
+    var progress: DayProgress? = nil
+
+    private var fraction: Double { progress?.fraction ?? 0 }
+    private var isWorkFree: Bool { progress?.isWorkFree ?? false }
+    private var isComplete: Bool { fraction >= 1 }
 
     private let dayAbbrevFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -141,10 +166,24 @@ private struct DayBar: View {
                 .lineLimit(1)
 
             ZStack {
+                // Base background
                 RoundedRectangle(cornerRadius: 3)
                     .fill(barFill)
                     .frame(maxWidth: .infinity)
                     .frame(height: 22)
+
+                // Progress fill – grows from the bottom, capped at 100%
+                if fraction > 0 {
+                    VStack(spacing: 0) {
+                        Spacer(minLength: 0)
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(progressFill)
+                            .frame(height: 22 * fraction)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 22)
+                    .clipShape(RoundedRectangle(cornerRadius: 3))
+                }
 
                 if showFocusRing {
                     RoundedRectangle(cornerRadius: 3)
@@ -153,7 +192,11 @@ private struct DayBar: View {
                         .frame(height: 22)
                 }
 
-                if isToday && !isSelected {
+                if isComplete {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 9, weight: .bold))
+                        .foregroundStyle(.white)
+                } else if isToday && !isSelected {
                     Circle()
                         .fill(Color.accentColor.opacity(0.7))
                         .frame(width: 4, height: 4)
@@ -173,9 +216,21 @@ private struct DayBar: View {
         if isSelected {
             return AnyShapeStyle(Color.accentColor)
         } else if isToday {
-            return AnyShapeStyle(Color.accentColor.opacity(0.18))
+            return AnyShapeStyle(Color.accentColor.opacity(isWorkFree ? 0.08 : 0.18))
         } else {
-            return AnyShapeStyle(Color.primary.opacity(0.07))
+            // Work-free days (0h required) are rendered more subtle
+            return AnyShapeStyle(Color.primary.opacity(isWorkFree ? 0.03 : 0.07))
+        }
+    }
+
+    private var progressFill: AnyShapeStyle {
+        if isComplete {
+            // Required hours reached
+            return AnyShapeStyle(Color.green.opacity(isSelected ? 0.85 : 0.7))
+        } else if isSelected {
+            return AnyShapeStyle(Color.white.opacity(0.35))
+        } else {
+            return AnyShapeStyle(Color.accentColor.opacity(0.5))
         }
     }
 }

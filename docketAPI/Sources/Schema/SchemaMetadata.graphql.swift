@@ -67,7 +67,9 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "Timetracking": return DocketAPI.Objects.Timetracking
     case "TimetrackingConnection": return DocketAPI.Objects.TimetrackingConnection
     case "User": return DocketAPI.Objects.User
+    case "UserConnection": return DocketAPI.Objects.UserConnection
     case "UserWorkTime": return DocketAPI.Objects.UserWorkTime
+    case "UserWorkTimeConnection": return DocketAPI.Objects.UserWorkTimeConnection
     case "Viewer": return DocketAPI.Objects.Viewer
     default: return nil
     }

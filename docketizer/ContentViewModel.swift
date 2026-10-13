@@ -10,6 +10,26 @@ import Combine
 import DocketAPI
 import Foundation
 
+// Keyed by "YYYY-MM-DD" → tracked minutes for that day
+typealias DayDurations = [String: Double]
+
+/// Tracked vs. required time for a single day.
+struct DayProgress: Equatable {
+    let trackedMinutes: Double
+    let targetMinutes: Double
+
+    /// A day without required hours (e.g. weekend, part-time day off).
+    var isWorkFree: Bool { targetMinutes <= 0 }
+
+    /// Fill level 0.0–1.0. On work-free days any tracked time counts as fully done.
+    var fraction: Double {
+        if isWorkFree {
+            return trackedMinutes > 0 ? 1 : 0
+        }
+        return min(max(trackedMinutes / targetMinutes, 0), 1)
+    }
+}
+
 enum TicketView {
     case recently
     case assigned
@@ -60,7 +80,18 @@ class ContentViewModel: ObservableObject {
 
     @Published var isSubmitEnabled: Bool = true
 
+    // Weekly progress: "YYYY-MM-DD" → tracked vs. required time
+    @Published var weekDayProgress: [String: DayProgress] = [:]
+
     private var currentUser: ViewerQuery.Data.Viewer? = nil
+    private var weekDayDurations: DayDurations = [:]
+    private var currentWeekDates: [String] = []
+    // Week currently shown in the WeekNavigator
+    private var displayedWeekStart: Date? = nil
+    // "mon"/"tue"/… → hours; nil while not loaded or if the user has no work times configured
+    private var workTimesPerDay: [String: Double]? = nil
+    // Week start ("YYYY-MM-DD") the work times were requested for, to refetch on week change
+    private var workTimesWeekKey: String? = nil
     private var cancellables = Set<AnyCancellable>()
 
     init() {
@@ -83,21 +114,76 @@ class ContentViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    public func queryTimetracking(for date: Date? = nil) {
+    // MARK: - Week progress helpers
+
+    private func weekDates(for date: Date) -> [Date] {
         let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day], from: date ?? selectedDate)
-        let formattedDate = String(format: "%04d-%02d-%02d", components.year!, components.month!, components.day!)
+        let weekday = calendar.component(.weekday, from: date)
+        let daysFromFirst = (weekday - calendar.firstWeekday + 7) % 7
+        let weekStart = calendar.date(byAdding: .day, value: -daysFromFirst, to: calendar.startOfDay(for: date))!
+        return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: weekStart) }
+    }
+
+    private func weekDateStrings(for date: Date) -> [String] {
+        weekDates(for: date).map { dateString(from: $0) }
+    }
+
+    private static let weekdayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+
+    private func workHours(for date: Date, in workTimes: [String: Double]) -> Double {
+        let calendar = Calendar.current
+        // Calendar.weekday: 1=Sun, 2=Mon, …, 7=Sat
+        let weekday = calendar.component(.weekday, from: date)
+        let key = Self.weekdayKeys[weekday - 1]
+        return workTimes[key] ?? 0
+    }
+
+    private func recalculateWeekProgress() {
+        // Without work times we can't tell work-free days from untracked ones – show nothing
+        guard let workTimes = workTimesPerDay else {
+            weekDayProgress = [:]
+            return
+        }
+
+        var progress: [String: DayProgress] = [:]
+        // Iterate the whole week (not only days with entries) so 0h days are known to the UI
+        for dateStr in currentWeekDates {
+            guard let date = date(from: dateStr) else { continue }
+            progress[dateStr] = DayProgress(
+                trackedMinutes: weekDayDurations[dateStr] ?? 0,
+                targetMinutes: workHours(for: date, in: workTimes) * 60
+            )
+        }
+        weekDayProgress = progress
+    }
+
+    private func dateString(from date: Date) -> String {
+        let c = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", c.year!, c.month!, c.day!)
+    }
+
+    private func date(from string: String) -> Date? {
+        let parts = string.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3 else { return nil }
+        var c = DateComponents()
+        c.year = parts[0]
+        c.month = parts[1]
+        c.day = parts[2]
+        return Calendar.current.date(from: c)
+    }
+
+    public func queryTimetracking(for date: Date? = nil) {
+        let targetDate = date ?? selectedDate
+        let formattedDate = dateString(from: targetDate)
 
         guard let client = Apollo.shared.client() else {
             self.errorMessage = "Authentication missing. Please log in again."
             return
         }
 
-        client.fetch(query: ViewerQuery(date: formattedDate)) { [weak self] result in
+        client.fetch(query: ViewerQuery(date: formattedDate), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else {
-                    return
-                }
+                guard let self = self else { return }
 
                 switch result {
                 case .success(let graphQLResult):
@@ -126,6 +212,97 @@ class ContentViewModel: ObservableObject {
                         self.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
                     }
                 case .failure(let error):
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    /// Loads tracked durations (and work times) for the week starting at `weekStart`.
+    /// Driven by the week shown in the WeekNavigator, independent of the selected day.
+    public func queryWeekProgress(weekStart: Date) {
+        let weekDates = weekDateStrings(for: weekStart)
+        guard let firstDay = weekDates.first, let lastDay = weekDates.last else { return }
+        displayedWeekStart = weekStart
+
+        // The API ANDs all entries of the `dates` filter, so a list of single days matches nothing.
+        // A range has to be expressed with comparison operators instead.
+        let rangeFilter = [">=\(firstDay)", "<=\(lastDay)"]
+
+        guard let client = Apollo.shared.client() else {
+            self.errorMessage = "Authentication missing. Please log in again."
+            return
+        }
+
+        client.fetch(query: WeekTimetrackingsQuery(dates: rangeFilter), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                // Ignore stale responses if the user already navigated to another week
+                guard let shownWeek = self.displayedWeekStart, self.dateString(from: shownWeek) == self.dateString(from: weekStart)
+                else { return }
+
+                switch result {
+                case .success(let graphQLResult):
+                    if let viewer = graphQLResult.data?.viewer {
+                        // Work times can differ over time (activeFrom), so fetch them per week
+                        if self.workTimesWeekKey != firstDay {
+                            self.workTimesWeekKey = firstDay
+                            self.queryWorkTimes(userId: viewer.id, date: firstDay)
+                        }
+
+                        // Accumulate durations per day
+                        var durations: DayDurations = [:]
+                        for node in viewer.timetrackings.nodes {
+                            durations[node.date, default: 0] += node.duration
+                        }
+                        self.weekDayDurations = durations
+                        self.currentWeekDates = weekDates
+                        self.recalculateWeekProgress()
+                    }
+
+                    if let errors = graphQLResult.errors {
+                        self.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+                    }
+                case .failure(let error):
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+
+    public func queryWorkTimes(userId: String, date: String) {
+        guard let client = Apollo.shared.client() else { return }
+
+        client.fetch(query: WorkTimesQuery(userId: userId, date: date), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                // Ignore stale responses if the week changed in the meantime
+                guard self.workTimesWeekKey == date else { return }
+
+                switch result {
+                case .success(let graphQLResult):
+                    if let workTime = graphQLResult.data?.users.nodes.first?.workTimes.nodes.first {
+                        self.workTimesPerDay = [
+                            "mon": workTime.mon,
+                            "tue": workTime.tue,
+                            "wed": workTime.wed,
+                            "thu": workTime.thu,
+                            "fri": workTime.fri,
+                            "sat": workTime.sat,
+                            "sun": workTime.sun,
+                        ]
+                    } else {
+                        // No work times configured for this user/week
+                        self.workTimesPerDay = nil
+                    }
+                    self.recalculateWeekProgress()
+
+                    if let errors = graphQLResult.errors {
+                        self.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
+                    }
+                case .failure(let error):
+                    // Allow a retry on the next week fetch
+                    self.workTimesWeekKey = nil
                     self.errorMessage = error.localizedDescription
                 }
             }
@@ -220,6 +397,9 @@ class ContentViewModel: ObservableObject {
                 switch result {
                 case .success(let graphQLResult):
                     self?.queryTimetracking()
+                    if let weekStart = self?.displayedWeekStart {
+                        self?.queryWeekProgress(weekStart: weekStart)
+                    }
 
                     if let errors = graphQLResult.errors {
                         self?.errorMessage = errors.map { $0.message! }.joined(separator: ", ")
