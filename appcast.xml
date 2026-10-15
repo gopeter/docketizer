@@ -25,6 +25,28 @@
         -->
 
         <item>
+            <title>Version 1.1.2</title>
+            <pubDate>Thu, 15 Oct 2026 20:23:57 +0000</pubDate>
+            <sparkle:version>4</sparkle:version>
+            <sparkle:shortVersionString>1.1.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description
+            ><![CDATA[
+                <h3>Fixes</h3>
+                <ul>
+                    <li>The settings window shows its content again.</li>
+                    <li>⌘, opens the settings again.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://intern.evernow.dev/docketizer/releases/docketizer-1.1.2.zip"
+                sparkle:edSignature="4lMHNT5okX1yiav2bhO/kxFlOR4HG8WYko/4NtUJKzUi85qgHuLDdbcwkD3t+6Sml+y44eUmAUIpZCrrdT30DQ=="
+                length="3777391"
+                type="application/octet-stream"
+            />
+        </item>
+
+        <item>
             <title>Version 1.1.1</title>
             <pubDate>Thu, 15 Oct 2026 12:18:15 +0000</pubDate>
             <sparkle:version>3</sparkle:version>
