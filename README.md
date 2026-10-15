@@ -15,7 +15,7 @@ Beta
 - [x] Sparkle einbauen
 - [x] Tage auswählbar machen
 - [x] App Icon
+- [x] Kleiner Graph über die erfassten Zeiten der aktuellen Woche
 
 Wunschliste
 - [ ] Stoppuhr einbauen
-- [ ] Kleiner Graph über die erfassten Zeiten der aktuellen Woche

@@ -12,6 +12,13 @@ enum AuthError: Error {
     case encodingError
     case invalidCredentials
     case serverError
+    /// The account has two-factor authentication: ask for the authenticator app's code.
+    case twoFactorRequired
+    /// The two-factor code was wrong (or already used).
+    case twoFactorInvalid
+    /// The workspace requires two-factor authentication and the user hasn't set it up yet —
+    /// only possible in the web app.
+    case twoFactorSetupRequired
 }
 
 enum SilentReAuthResult {
@@ -21,6 +28,19 @@ enum SilentReAuthResult {
 
 private struct LoginResponse: Codable {
     let auth_token: String
+    /// Only for users with two-factor authentication: stands in for the code on later logins
+    /// (30 days), so silent re-authentication works without asking for a code.
+    let two_factor_token: String?
+}
+
+private struct LoginErrorResponse: Codable {
+    let error: String?
+    let code: String?
+}
+
+private struct LoginResult {
+    let token: String
+    let twoFactorToken: String?
 }
 
 class AuthManager {
@@ -38,8 +58,15 @@ class AuthManager {
     // MARK: - Public
 
     /// Logs in, saves credentials to Keychain, updates UserDefaults, reconfigures Apollo.
-    func login(tenant: String, email: String, password: String) async throws {
-        let token = try await performLogin(tenant: tenant, email: email, password: password)
+    /// `otpCode` is the authenticator app's code (or a backup code) for accounts with
+    /// two-factor authentication — the first attempt without it throws `.twoFactorRequired`.
+    func login(tenant: String, email: String, password: String, otpCode: String? = nil) async throws {
+        let result = try await performLogin(
+            tenant: tenant, email: email, password: password,
+            otpCode: otpCode, twoFactorToken: KeychainHelper.load(for: "twoFactorToken")
+        )
+        let token = result.token
+        storeTwoFactorToken(result.twoFactorToken)
 
         KeychainHelper.save(email, for: "email")
         KeychainHelper.save(password, for: "password")
@@ -65,6 +92,7 @@ class AuthManager {
         KeychainHelper.delete(for: "email")
         KeychainHelper.delete(for: "password")
         KeychainHelper.delete(for: "tenant")
+        KeychainHelper.delete(for: "twoFactorToken")
 
         UserDefaults.standard.removeObject(forKey: "apiKey")
         UserDefaults.standard.removeObject(forKey: "tenant")
@@ -131,19 +159,23 @@ class AuthManager {
             }
 
             do {
-                let token = try await performLogin(
-                    tenant: storedTenant, email: email, password: password
+                let result = try await performLogin(
+                    tenant: storedTenant, email: email, password: password,
+                    otpCode: nil, twoFactorToken: KeychainHelper.load(for: "twoFactorToken")
                 )
+                storeTwoFactorToken(result.twoFactorToken)
                 // Update UserDefaults so AuthHeaderInterceptor picks up the new token on retry.
-                UserDefaults.standard.set(token, forKey: "apiKey")
+                UserDefaults.standard.set(result.token, forKey: "apiKey")
                 UserDefaults.standard.set(storedTenant, forKey: "tenant")
 
                 lastReAuthDate = Date()
                 lastReAuthResult = .success
                 return .success
-            } catch AuthError.invalidCredentials {
+            } catch let authError as AuthError where authError != .serverError && authError != .invalidURL && authError != .encodingError {
+                // Wrong credentials, or the server wants a two-factor code (the remembered
+                // two-factor token expired or was voided): only the login form can help.
                 lastReAuthDate = Date()
-                let result = SilentReAuthResult.failure(requiresLogin: true, error: AuthError.invalidCredentials)
+                let result = SilentReAuthResult.failure(requiresLogin: true, error: authError)
                 lastReAuthResult = result
                 return result
             } catch {
@@ -200,7 +232,17 @@ class AuthManager {
 
     // MARK: - Private
 
-    private func performLogin(tenant: String, email: String, password: String) async throws -> String {
+    private func storeTwoFactorToken(_ token: String?) {
+        if let token {
+            KeychainHelper.save(token, for: "twoFactorToken")
+        } else {
+            KeychainHelper.delete(for: "twoFactorToken")
+        }
+    }
+
+    private func performLogin(
+        tenant: String, email: String, password: String, otpCode: String?, twoFactorToken: String?
+    ) async throws -> LoginResult {
         var domain = ProcessInfo.processInfo.environment["DOCKET_URL"] ?? "godocket.app"
         if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
             domain = "docket.dev:3000"
@@ -210,7 +252,9 @@ class AuthManager {
             throw AuthError.invalidURL
         }
 
-        let payload = ["email": email, "password": password]
+        var payload = ["email": email, "password": password]
+        if let otpCode, !otpCode.isEmpty { payload["otp_code"] = otpCode }
+        if let twoFactorToken { payload["two_factor_token"] = twoFactorToken }
         guard let jsonData = try? JSONSerialization.data(withJSONObject: payload) else {
             throw AuthError.encodingError
         }
@@ -224,13 +268,19 @@ class AuthManager {
 
         if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
             if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
-                throw AuthError.invalidCredentials
+                // `code` tells two-factor answers apart from wrong credentials.
+                switch (try? JSONDecoder().decode(LoginErrorResponse.self, from: data))?.code {
+                case "otp_required": throw AuthError.twoFactorRequired
+                case "otp_invalid": throw AuthError.twoFactorInvalid
+                case "otp_setup_required": throw AuthError.twoFactorSetupRequired
+                default: throw AuthError.invalidCredentials
+                }
             } else {
                 throw AuthError.serverError
             }
         }
 
         let decoded = try JSONDecoder().decode(LoginResponse.self, from: data)
-        return decoded.auth_token
+        return LoginResult(token: decoded.auth_token, twoFactorToken: decoded.two_factor_token)
     }
 }

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <rss
     version="2.0"
-    xmlns:sparkle="http://www.andymatern.com/developer/sparkle/"
+    xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
 >
     <channel>
         <title>docketizer</title>
-        <link>hhttps://intern.evernow.dev/docketizer/appcast.xml</link>
+        <link>https://intern.evernow.dev/docketizer/appcast.xml</link>
         <description>docketizer release notes and update feed</description>
         <language>en</language>
 
@@ -23,6 +23,31 @@
             3. Copy this <item> block, fill in the new version details and upload
                the .zip + updated appcast.xml to your server.
         -->
+
+        <item>
+            <title>Version 1.1</title>
+            <pubDate>Thu, 15 Oct 2026 10:51:34 +0000</pubDate>
+            <sparkle:version>2</sparkle:version>
+            <sparkle:shortVersionString>1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description
+            ><![CDATA[
+                <h3>What's new</h3>
+                <ul>
+                    <li>The week overview now shows how much of your required working hours you have tracked per day. Days with all hours tracked turn green.</li>
+                    <li>Days without required hours (e.g. weekends) are shown more subtle.</li>
+                    <li>Switching weeks now updates the overview right away.</li>
+                    <li>Available updates are now shown unobtrusively via a dot on the menu bar icon and a button in the footer.</li>
+                    <li>Support for 2FA login.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://intern.evernow.dev/docketizer/releases/docketizer-1.1.zip"
+                sparkle:edSignature="GCgFO/JM5HTSV6NZGl2mm/KSQWb/wE7u+LH6MQUgIw0GpMbtIla/zixLx/ymigTS7B+RgkRGe8LKZ0gVm9spCA=="
+                length="3772837"
+                type="application/octet-stream"
+            />
+        </item>
 
         <item>
             <title>Version 1.0</title>
