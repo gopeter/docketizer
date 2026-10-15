@@ -13,18 +13,14 @@ import SwiftUI
 // MARK: - AppDelegate
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-    // Owned here (instead of being handed over from a view's onAppear) so it's available right at
-    // launch, e.g. for the right-click menu before the popover was ever opened.
-    let updaterController = SPUStandardUpdaterController(
-        startingUpdater: true,
-        updaterDelegate: nil,
-        userDriverDelegate: UpdateReminder.shared
-    )
-    var openSettings: (() -> Void)?
-
     private var rightClickMonitor: Any?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // Both are lazy singletons – start them right at launch instead of waiting for the popover
+        // to be opened (e.g. after launch at login), so update checks and the global shortcut work.
+        _ = UpdateReminder.shared.updater
+        _ = ShortcutManager.shared
+
         rightClickMonitor = NSEvent.addLocalMonitorForEvents(matching: .rightMouseDown) { [weak self] event in
             guard let self,
                 let window = event.window,
@@ -62,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             keyEquivalent: ""
         )
         updateItem.target = self
-        updateItem.isEnabled = updaterController.updater.canCheckForUpdates
+        updateItem.isEnabled = UpdateReminder.shared.updater.canCheckForUpdates
         menu.addItem(updateItem)
 
         menu.addItem(.separator())
@@ -85,12 +81,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @objc private func openSettingsWindow() {
-        openSettings?()
+    @MainActor @objc private func openSettingsWindow() {
+        SettingsWindowController.shared.show()
     }
 
     @objc private func checkForUpdates() {
-        UpdateReminder.shared.showUpdate(with: updaterController.updater)
+        UpdateReminder.shared.showUpdate()
     }
 }
 
@@ -107,9 +103,6 @@ struct docketizerApp: App {
         MenuBarExtra(
             content: {
                 RootView()
-                    .onReceive(ShortcutManager.shared.toggleMenuSignal) {
-                        isMenuPresented.toggle()
-                    }
             },
             label: {
                 let image: NSImage = {
@@ -123,10 +116,8 @@ struct docketizerApp: App {
             }
         )
         .menuBarExtraStyle(.window)
-        .menuBarExtraAccess(isPresented: $isMenuPresented)
-
-        SwiftUI.Settings {
-            SettingsView(updater: appDelegate.updaterController.updater)
+        .menuBarExtraAccess(isPresented: $isMenuPresented) { statusItem in
+            ShortcutManager.shared.statusItem = statusItem
         }
     }
 

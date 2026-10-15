@@ -28,8 +28,14 @@
 	<true/>
 	<key>NSHumanReadableCopyright</key>
 	<string></string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
 	<key>SUFeedURL</key>
 	<string>https://intern.evernow.dev/docketizer/appcast.xml</string>
+	<key>SUScheduledCheckInterval</key>
+	<integer>3600</integer>
 	<key>SUPublicEDKey</key>
 	<string>eAXuv0w12hlAj/73x/imkeIVLPHuvumixVSrB2sEs8c=</string>
 </dict>

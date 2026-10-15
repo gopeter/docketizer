@@ -11,8 +11,6 @@ struct RootView: View {
     @AppStorage("apiKey") var apiKey: String?
     @AppStorage("tenant") var tenant: String?
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
-    @Environment(\.openSettings) private var openSettings
-    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some View {
         ZStack {
@@ -26,9 +24,6 @@ struct RootView: View {
                             Task { await AuthManager.shared.refreshIfNeeded() }
                         }
                 }
-            }
-            .onAppear {
-                appDelegate.openSettings = { openSettings() }
             }
             .disabled(!networkMonitor.isConnected)
 

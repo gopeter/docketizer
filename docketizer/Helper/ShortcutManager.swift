@@ -8,6 +8,7 @@
 import AppKit
 import Combine
 import Foundation
+import MenuBarExtraAccess
 
 struct RecordedShortcut: Codable, Equatable {
     let keyCode: UInt16
@@ -29,10 +30,10 @@ class ShortcutManager: ObservableObject {
         }
     }
 
-    /// Sends a Void signal whenever the shortcut fires. The App struct listens via
-    /// `.onReceive` and toggles its own `@State isMenuPresented` – no `@ObservedObject`
-    /// in the App body, which would destroy the library's window observers on every render.
-    let toggleMenuSignal = PassthroughSubject<Void, Never>()
+    /// The MenuBarExtra's status item, handed over by MenuBarExtraAccess. The shortcut toggles it
+    /// directly – a signal observed inside the popover content would be lost until the popover was
+    /// opened once, since SwiftUI only builds the content then.
+    weak var statusItem: NSStatusItem?
 
     @Published var hasAccessibilityPermission: Bool = false
 
@@ -109,7 +110,7 @@ class ShortcutManager: ObservableObject {
             let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == shortcut.keyCode && flags == shortcut.eventModifiers {
                 DispatchQueue.main.async {
-                    self.toggleMenuSignal.send()
+                    self.statusItem?.togglePresented()
                 }
             }
         }
@@ -119,7 +120,7 @@ class ShortcutManager: ObservableObject {
             let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
             if event.keyCode == shortcut.keyCode && flags == shortcut.eventModifiers {
                 DispatchQueue.main.async {
-                    self?.toggleMenuSignal.send()
+                    self?.statusItem?.togglePresented()
                 }
                 return nil  // consume the event
             }

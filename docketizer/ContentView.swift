@@ -29,8 +29,6 @@ struct ContentView: View {
     @State private var sidebarView: SidebarView = .list
     @State private var showDatePicker = false
 
-    @Environment(\.openSettings) private var openSettings
-    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @ObservedObject private var updateReminder = UpdateReminder.shared
 
     @StateObject var viewModel: ContentViewModel
@@ -186,7 +184,7 @@ struct ContentView: View {
 
                     if let version = updateReminder.pendingUpdateVersion {
                         Button("Update \(version)", systemImage: "arrow.down.circle.fill") {
-                            updateReminder.showUpdate(with: appDelegate.updaterController.updater)
+                            updateReminder.showUpdate()
                         }
                         .buttonStyle(.borderless)
                         .foregroundStyle(Color.accentColor)
@@ -194,7 +192,7 @@ struct ContentView: View {
                     }
 
                     Button {
-                        openSettings()
+                        SettingsWindowController.shared.show()
                     } label: {
                         Image(systemName: "gearshape")
                     }.buttonStyle(.borderless)
