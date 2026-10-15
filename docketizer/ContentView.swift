@@ -29,6 +29,7 @@ struct ContentView: View {
     @State private var sidebarView: SidebarView = .list
     @State private var showDatePicker = false
 
+    @Environment(\.openSettings) private var openSettings
     @ObservedObject private var updateReminder = UpdateReminder.shared
 
     @StateObject var viewModel: ContentViewModel
@@ -192,7 +193,7 @@ struct ContentView: View {
                     }
 
                     Button {
-                        SettingsWindowController.shared.show()
+                        openSettings()
                     } label: {
                         Image(systemName: "gearshape")
                     }.buttonStyle(.borderless)

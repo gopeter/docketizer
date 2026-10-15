@@ -13,6 +13,9 @@ import SwiftUI
 // MARK: - AppDelegate
 
 class AppDelegate: NSObject, NSApplicationDelegate {
+    /// Set by MenuBarLabel – SwiftUI's Settings scene can only be opened from within a view.
+    var openSettings: (() -> Void)?
+
     private var rightClickMonitor: Any?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -81,8 +84,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    @MainActor @objc private func openSettingsWindow() {
-        SettingsWindowController.shared.show()
+    @objc private func openSettingsWindow() {
+        openSettings?()
     }
 
     @objc private func checkForUpdates() {
@@ -112,12 +115,19 @@ struct docketizerApp: App {
                     return $0
                 }(NSImage(named: "favicon")!)
 
-                Image(nsImage: updateReminder.hasPendingUpdate ? Self.badged(image) : image)
+                MenuBarLabel(
+                    image: updateReminder.hasPendingUpdate ? Self.badged(image) : image,
+                    appDelegate: appDelegate
+                )
             }
         )
         .menuBarExtraStyle(.window)
         .menuBarExtraAccess(isPresented: $isMenuPresented) { statusItem in
             ShortcutManager.shared.statusItem = statusItem
+        }
+
+        SwiftUI.Settings {
+            SettingsView(updater: UpdateReminder.shared.updater)
         }
     }
 
@@ -142,5 +152,23 @@ struct docketizerApp: App {
         }
         badged.isTemplate = true
         return badged
+    }
+}
+
+// MARK: - Menu Bar Label
+
+/// The menu bar icon. Also hands SwiftUI's `openSettings` action over to the AppDelegate for the
+/// right-click menu: unlike the popover content, the label exists right from launch.
+private struct MenuBarLabel: View {
+    let image: NSImage
+    let appDelegate: AppDelegate
+
+    @Environment(\.openSettings) private var openSettings
+
+    var body: some View {
+        Image(nsImage: image)
+            .onAppear {
+                appDelegate.openSettings = { openSettings() }
+            }
     }
 }

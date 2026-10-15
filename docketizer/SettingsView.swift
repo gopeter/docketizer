@@ -118,35 +118,6 @@ struct CheckForUpdatesView: View {
     }
 }
 
-// MARK: - Window
-
-/// Shows SettingsView in a plain window. SwiftUI's Settings scene can only be opened through the
-/// `openSettings` environment action, which AppKit code like the right-click menu can't reach
-/// (at least not before the popover was opened once).
-@MainActor
-final class SettingsWindowController {
-    static let shared = SettingsWindowController()
-
-    private var window: NSWindow?
-
-    func show() {
-        if window == nil {
-            let hostingController = NSHostingController(rootView: SettingsView(updater: UpdateReminder.shared.updater))
-            let window = NSWindow(contentViewController: hostingController)
-            window.title = "docketizer Settings"
-            window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
-            window.center()
-            self.window = window
-        }
-
-        // As a background app we need to activate first, otherwise the window opens behind other apps
-        NSApp.activate()
-        window?.makeKeyAndOrderFront(nil)
-        window?.orderFrontRegardless()
-    }
-}
-
 // MARK: - Settings View
 
 struct SettingsView: View {
@@ -219,6 +190,17 @@ struct SettingsView: View {
         .frame(width: 400)
         .padding(0)
         .onAppear {
+            // we don't want to focus our preview again and again
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                DispatchQueue.main.async {
+                    NSApp.activate(ignoringOtherApps: true)
+                    NSApp.windows
+                        .filter { $0.canBecomeKey && $0.styleMask.contains(.titled) }
+                        .first?
+                        .makeKeyAndOrderFront(nil)
+                }
+            }
+
             // Permission may have been granted in System Settings in the meantime
             shortcutManager.checkAccessibilityPermission()
             if shortcutManager.hasAccessibilityPermission {
