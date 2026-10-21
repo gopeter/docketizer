@@ -7,7 +7,7 @@ public class ViewerQuery: GraphQLQuery {
   public static let operationName: String = "Viewer"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query Viewer($date: String!) { viewer { __typename id expertise { __typename id } timetrackings(filter: { dates: [$date] }) { __typename nodes { __typename id duration description ticket { __typename id number title } project { __typename id title pnr } } } recentlyTrackedTickets(count: 30) { __typename id title number project { __typename id title pnr } } assignedTickets(first: 30) { __typename nodes { __typename id title number project { __typename id title pnr } } } } }"#
+      #"query Viewer($date: String!) { viewer { __typename id expertise { __typename id } timetrackings(filter: { dates: [$date] }) { __typename nodes { __typename id duration description ticket { __typename id number title } project { __typename id title pnr } } } recentlyTrackedTickets(count: 30) { __typename id title number project { __typename id title pnr } } assignedTickets(first: 30, filter: { bookable: true }) { __typename nodes { __typename id title number project { __typename id title pnr } } } } }"#
     ))
 
   public var date: String
@@ -43,7 +43,10 @@ public class ViewerQuery: GraphQLQuery {
         .field("expertise", Expertise?.self),
         .field("timetrackings", Timetrackings.self, arguments: ["filter": ["dates": [.variable("date")]]]),
         .field("recentlyTrackedTickets", [RecentlyTrackedTicket].self, arguments: ["count": 30]),
-        .field("assignedTickets", AssignedTickets.self, arguments: ["first": 30]),
+        .field("assignedTickets", AssignedTickets.self, arguments: [
+          "first": 30,
+          "filter": ["bookable": true]
+        ]),
       ] }
 
       public var id: DocketAPI.ID { __data["id"] }

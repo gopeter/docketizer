@@ -1,5 +1,5 @@
 query ProjectTickets($projectId: ID!) {
-    tickets(filter: { projectIds: [$projectId] }) {
+    tickets(filter: { projectIds: [$projectId], bookable: true }) {
         nodes {
             id
             title

@@ -7,7 +7,7 @@ public class ProjectTicketsQuery: GraphQLQuery {
   public static let operationName: String = "ProjectTickets"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query ProjectTickets($projectId: ID!) { tickets(filter: { projectIds: [$projectId] }) { __typename nodes { __typename id title number project { __typename id title pnr } } } }"#
+      #"query ProjectTickets($projectId: ID!) { tickets(filter: { projectIds: [$projectId], bookable: true }) { __typename nodes { __typename id title number project { __typename id title pnr } } } }"#
     ))
 
   public var projectId: ID
@@ -24,7 +24,10 @@ public class ProjectTicketsQuery: GraphQLQuery {
 
     public static var __parentType: any ApolloAPI.ParentType { DocketAPI.Objects.Query }
     public static var __selections: [ApolloAPI.Selection] { [
-      .field("tickets", Tickets.self, arguments: ["filter": ["projectIds": [.variable("projectId")]]]),
+      .field("tickets", Tickets.self, arguments: ["filter": [
+        "projectIds": [.variable("projectId")],
+        "bookable": true
+      ]]),
     ] }
 
     public var tickets: Tickets { __data["tickets"] }

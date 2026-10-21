@@ -31,7 +31,7 @@ query Viewer($date: String!) {
                 pnr
             }
         }
-        assignedTickets(first: 30) {
+        assignedTickets(first: 30, filter: { bookable: true }) {
             nodes {
                 id
                 title
