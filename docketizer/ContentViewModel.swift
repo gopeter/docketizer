@@ -80,6 +80,9 @@ class ContentViewModel: ObservableObject {
 
     @Published var isSubmitEnabled: Bool = true
 
+    /// The stopwatch being booked through the form: saving the entry removes it on the server.
+    @Published var bookingStopwatch: StopwatchFields? = nil
+
     // Weekly progress: "YYYY-MM-DD" → tracked vs. required time
     @Published var weekDayProgress: [String: DayProgress] = [:]
 
@@ -379,8 +382,10 @@ class ContentViewModel: ObservableObject {
             userId: currentUser?.id ?? nil,
             serviceId: currentUser?.expertise?.id ?? nil,
             projectId: GraphQLNullable.some(ids[1]!),
-            ticketId: GraphQLNullable.some(ids[0]!)
+            ticketId: GraphQLNullable.some(ids[0]!),
+            stopwatchId: bookingStopwatch.map { GraphQLNullable.some($0.id) } ?? .none
         )
+        let booksStopwatch = bookingStopwatch != nil
 
         guard let client = Apollo.shared.client() else {
             self.errorMessage = "Authentication missing. Please log in again."
@@ -397,6 +402,14 @@ class ContentViewModel: ObservableObject {
                 switch result {
                 case .success(let graphQLResult):
                     self?.queryTimetracking()
+                    if booksStopwatch {
+                        if let errors = graphQLResult.data?.createTimetracking?.errors?.messages, !errors.isEmpty {
+                            self?.errorMessage = errors.joined(separator: ", ")
+                        } else if graphQLResult.errors == nil {
+                            self?.bookingStopwatch = nil
+                        }
+                        StopwatchStore.shared.refresh()
+                    }
                     if let weekStart = self?.displayedWeekStart {
                         self?.queryWeekProgress(weekStart: weekStart)
                     }
@@ -409,6 +422,36 @@ class ContentViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - Stopwatch booking
+
+    /// Fills the form from a stopwatch: its time rounded up to the next quarter hour, its title as
+    /// the description (unless it's still a default "Stopwatch 3"), its ticket if it has one.
+    public func prefill(from stopwatch: StopwatchFields) {
+        bookingStopwatch = stopwatch
+        duration = TimeHelper.formatMinutesToHours(Double(stopwatch.roundedMinutes))
+        let isDefaultTitle = stopwatch.title.range(of: #"^Stopwatch \d+$"#, options: .regularExpression) != nil
+        description = isDefaultTitle ? "" : stopwatch.title
+
+        guard let ticket = stopwatch.ticket else { return }
+
+        ticketView = .all
+        if ticketSelectionAllProjectId != ticket.project.id {
+            projectTickets = []
+            projectTicketsFiltered = []
+            queryProjectTickets(for: ticket.project.id)
+        }
+        ticketSelectionAllProjectId = ticket.project.id
+        ticketSelectionAllProjectLabel = ticket.project.pnr + " " + ticket.project.title
+        ticketSelectionAllTicketId = ticket.id
+        ticketSelectionAllTicketLabel = ticket.project.pnr + " / " + ticket.title
+    }
+
+    public func cancelBooking() {
+        bookingStopwatch = nil
+        duration = ""
+        description = ""
     }
 
     public func getSelectedTicketId() -> [String?] {

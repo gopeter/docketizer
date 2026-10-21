@@ -31,6 +31,7 @@ struct ContentView: View {
 
     @Environment(\.openSettings) private var openSettings
     @ObservedObject private var updateReminder = UpdateReminder.shared
+    @ObservedObject private var stopwatchStore = StopwatchStore.shared
 
     @StateObject var viewModel: ContentViewModel
 
@@ -160,7 +161,26 @@ struct ContentView: View {
                     .textFieldStyle(.roundedBorder)
                     .focused($focusedField, equals: .description)
 
-                    Button("Add timetracking") {
+                    if let stopwatch = viewModel.bookingStopwatch {
+                        HStack(alignment: .firstTextBaseline) {
+                            Text("\(stopwatch.title) ran \(TimeHelper.formatClock(stopwatch.seconds)), rounded up to the next quarter hour")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Spacer()
+
+                            Button {
+                                viewModel.cancelBooking()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                            .help("Don't book the stopwatch")
+                        }
+                    }
+
+                    Button(viewModel.bookingStopwatch == nil ? "Add timetracking" : "Book stopwatch") {
                         viewModel.createTimetracking()
 
                         viewModel.duration = ""
@@ -212,6 +232,9 @@ struct ContentView: View {
 
             VStack(alignment: .leading) {
                 if sidebarView == .list {
+                    StopwatchList(store: stopwatchStore, book: book)
+                        .padding(.bottom, 12)
+
                     timetrackingList
 
                 } else if sidebarView == .recentTickets {
@@ -271,6 +294,10 @@ struct ContentView: View {
             focusedField = .duration
             viewModel.queryTimetracking()
             viewModel.queryProjects()
+            stopwatchStore.startPolling()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
+            stopwatchStore.stopPolling()
         }
         .onCalendarDayChanged {
             viewModel.selectedDate = Date()
@@ -353,6 +380,15 @@ struct ContentView: View {
         viewModel.selectProjectTicket(ticket: ticket)
         sidebarView = .list
         focusedField = .description
+    }
+
+    /// Pauses the stopwatch, then fills the form with it – the ticket can still be picked there.
+    private func book(_ stopwatch: StopwatchFields) {
+        stopwatchStore.pause(stopwatch) { paused in
+            viewModel.prefill(from: paused)
+            sidebarView = .list
+            focusedField = paused.ticket == nil ? .ticket : .description
+        }
     }
 
     private func close() {

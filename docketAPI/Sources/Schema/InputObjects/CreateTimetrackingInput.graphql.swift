@@ -19,7 +19,8 @@ public struct CreateTimetrackingInput: InputObject {
     userId: GraphQLNullable<ID> = nil,
     serviceId: GraphQLNullable<ID> = nil,
     projectId: GraphQLNullable<ID> = nil,
-    ticketId: GraphQLNullable<ID> = nil
+    ticketId: GraphQLNullable<ID> = nil,
+    stopwatchId: GraphQLNullable<ID> = nil
   ) {
     __data = InputDict([
       "clientMutationId": clientMutationId,
@@ -29,7 +30,8 @@ public struct CreateTimetrackingInput: InputObject {
       "userId": userId,
       "serviceId": serviceId,
       "projectId": projectId,
-      "ticketId": ticketId
+      "ticketId": ticketId,
+      "stopwatchId": stopwatchId
     ])
   }
 
@@ -72,5 +74,11 @@ public struct CreateTimetrackingInput: InputObject {
   public var ticketId: GraphQLNullable<ID> {
     get { __data["ticketId"] }
     set { __data["ticketId"] = newValue }
+  }
+
+  /// Books this stopwatch of yours: it is removed together with creating the entry
+  public var stopwatchId: GraphQLNullable<ID> {
+    get { __data["stopwatchId"] }
+    set { __data["stopwatchId"] = newValue }
   }
 }

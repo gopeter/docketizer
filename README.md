@@ -18,4 +18,4 @@ Beta
 - [x] Kleiner Graph über die erfassten Zeiten der aktuellen Woche
 
 Wunschliste
-- [ ] Stoppuhr einbauen
+- [x] Stoppuhr einbauen

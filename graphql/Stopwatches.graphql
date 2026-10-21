@@ -1,0 +1,68 @@
+fragment StopwatchFields on Stopwatch {
+  id
+  title
+  running
+  seconds
+  roundedMinutes
+  ticket {
+    id
+    number
+    title
+    project {
+      id
+      pnr
+      title
+    }
+  }
+}
+
+query Stopwatches {
+  stopwatches {
+    ...StopwatchFields
+  }
+}
+
+mutation CreateStopwatch($input: CreateStopwatchInput!) {
+  createStopwatch(input: $input) {
+    stopwatches {
+      ...StopwatchFields
+    }
+    errors
+  }
+}
+
+mutation UpdateStopwatch($input: UpdateStopwatchInput!) {
+  updateStopwatch(input: $input) {
+    stopwatches {
+      ...StopwatchFields
+    }
+    errors
+  }
+}
+
+mutation StartStopwatch($input: StartStopwatchInput!) {
+  startStopwatch(input: $input) {
+    stopwatches {
+      ...StopwatchFields
+    }
+    errors
+  }
+}
+
+mutation PauseStopwatch($input: PauseStopwatchInput!) {
+  pauseStopwatch(input: $input) {
+    stopwatches {
+      ...StopwatchFields
+    }
+    errors
+  }
+}
+
+mutation DeleteStopwatch($input: DeleteStopwatchInput!) {
+  deleteStopwatch(input: $input) {
+    stopwatches {
+      ...StopwatchFields
+    }
+    errors
+  }
+}

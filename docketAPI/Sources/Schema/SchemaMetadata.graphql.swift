@@ -27,10 +27,12 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "Attachment": return DocketAPI.Objects.Attachment
     case "Board": return DocketAPI.Objects.Board
     case "Contact": return DocketAPI.Objects.Contact
+    case "CreateStopwatchPayload": return DocketAPI.Objects.CreateStopwatchPayload
     case "CreateTimetrackingPayload": return DocketAPI.Objects.CreateTimetrackingPayload
     case "CustomField": return DocketAPI.Objects.CustomField
     case "Customer": return DocketAPI.Objects.Customer
     case "CustomerAddress": return DocketAPI.Objects.CustomerAddress
+    case "DeleteStopwatchPayload": return DocketAPI.Objects.DeleteStopwatchPayload
     case "DeliveryNote": return DocketAPI.Objects.DeliveryNote
     case "DeliveryNoteComment": return DocketAPI.Objects.DeliveryNoteComment
     case "Event": return DocketAPI.Objects.Event
@@ -38,10 +40,15 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "ExternalCostAssignment": return DocketAPI.Objects.ExternalCostAssignment
     case "Invoice": return DocketAPI.Objects.Invoice
     case "InvoiceComment": return DocketAPI.Objects.InvoiceComment
+    case "JiraProjectLink": return DocketAPI.Objects.JiraProjectLink
+    case "JiraSite": return DocketAPI.Objects.JiraSite
+    case "JiraUserCredential": return DocketAPI.Objects.JiraUserCredential
+    case "JiraUserMapping": return DocketAPI.Objects.JiraUserMapping
     case "Mention": return DocketAPI.Objects.Mention
     case "Mutation": return DocketAPI.Objects.Mutation
     case "OrderConfirmation": return DocketAPI.Objects.OrderConfirmation
     case "OrderConfirmationComment": return DocketAPI.Objects.OrderConfirmationComment
+    case "PauseStopwatchPayload": return DocketAPI.Objects.PauseStopwatchPayload
     case "Phase": return DocketAPI.Objects.Phase
     case "Project": return DocketAPI.Objects.Project
     case "ProjectConnection": return DocketAPI.Objects.ProjectConnection
@@ -53,6 +60,8 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "ServiceCategory": return DocketAPI.Objects.ServiceCategory
     case "ServiceRate": return DocketAPI.Objects.ServiceRate
     case "SharedProjectReport": return DocketAPI.Objects.SharedProjectReport
+    case "StartStopwatchPayload": return DocketAPI.Objects.StartStopwatchPayload
+    case "Stopwatch": return DocketAPI.Objects.Stopwatch
     case "Stripe": return DocketAPI.Objects.Stripe
     case "StripeCreditCard": return DocketAPI.Objects.StripeCreditCard
     case "StripeInvoice": return DocketAPI.Objects.StripeInvoice
@@ -66,6 +75,7 @@ public enum SchemaMetadata: ApolloAPI.SchemaMetadata {
     case "TicketConnection": return DocketAPI.Objects.TicketConnection
     case "Timetracking": return DocketAPI.Objects.Timetracking
     case "TimetrackingConnection": return DocketAPI.Objects.TimetrackingConnection
+    case "UpdateStopwatchPayload": return DocketAPI.Objects.UpdateStopwatchPayload
     case "User": return DocketAPI.Objects.User
     case "UserConnection": return DocketAPI.Objects.UserConnection
     case "UserWorkTime": return DocketAPI.Objects.UserWorkTime
