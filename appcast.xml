@@ -25,6 +25,30 @@
         -->
 
         <item>
+            <title>Version 1.2.0</title>
+            <pubDate>Wed, 21 Oct 2026 20:43:30 +0000</pubDate>
+            <sparkle:version>5</sparkle:version>
+            <sparkle:shortVersionString>1.2.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <description
+            ><![CDATA[
+                <h3>New</h3>
+                <ul>
+                    <li>Stopwatches: run as many as you need side by side, name them, pause, resume and correct the time. Pick the ticket when you book; the booking suggests the next quarter hour and shows the time you actually tracked.</li>
+                    <li>Stopwatches are shared with the docket web app and your AI connection: one started in the browser runs here too.</li>
+                    <li>On a project linked to Jira, booking offers only its Jira tickets.</li>
+                    <li>docketizer now talks to docket.rocks, docket's new address. Nothing to do on your side.</li>
+                </ul>
+            ]]></description>
+            <enclosure
+                url="https://intern.evernow.dev/docketizer/releases/docketizer-1.2.0.zip"
+                sparkle:edSignature="1gyTvoB9Pkv+EYpjsmTxbdUvX8jw0zyYZkWcy63MFA1kkSRD5UQsP/F67jPeTdPzqUeZMEt6kiB0ThcwDoo4Cg=="
+                length="3867332"
+                type="application/octet-stream"
+            />
+        </item>
+
+        <item>
             <title>Version 1.1.2</title>
             <pubDate>Thu, 15 Oct 2026 20:23:57 +0000</pubDate>
             <sparkle:version>4</sparkle:version>
