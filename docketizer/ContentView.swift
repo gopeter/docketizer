@@ -482,7 +482,7 @@ extension ContentView {
     }
 
     private func openWebInterface() {
-        let domain = ProcessInfo.processInfo.environment["DOCKET_URL"] ?? "godocket.app"
+        let domain = DocketServer.domain
         guard
             let tenant = UserDefaults.standard.string(forKey: "tenant"),
             let url = URL(string: "https://\(tenant).\(domain)/timetracking")

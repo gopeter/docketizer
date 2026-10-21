@@ -243,10 +243,7 @@ class AuthManager {
     private func performLogin(
         tenant: String, email: String, password: String, otpCode: String?, twoFactorToken: String?
     ) async throws -> LoginResult {
-        var domain = ProcessInfo.processInfo.environment["DOCKET_URL"] ?? "godocket.app"
-        if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1" {
-            domain = "docket.dev:3000"
-        }
+        let domain = DocketServer.domain
 
         guard let url = URL(string: "https://\(tenant).\(domain)/api/login") else {
             throw AuthError.invalidURL
