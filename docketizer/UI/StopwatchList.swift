@@ -88,9 +88,11 @@ struct StopwatchList: View {
                 )
             }
 
+            // Accent blue is hard to read on the popover's translucent grey: a running clock is
+            // bright and bold instead, a paused one dimmed.
             Text(TimeHelper.formatClock(store.seconds(of: stopwatch, at: now)))
-                .font(.callout.monospacedDigit())
-                .foregroundStyle(stopwatch.running ? Color.accentColor : .secondary)
+                .font(.callout.monospacedDigit().weight(stopwatch.running ? .semibold : .regular))
+                .foregroundStyle(stopwatch.running ? .primary : .secondary)
 
             Button {
                 store.toggle(stopwatch)
