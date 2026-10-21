@@ -154,7 +154,7 @@ struct StopwatchEditor: View {
                     Button("Keep it") { confirmDiscard = false }
                     Button("Discard", role: .destructive) { store.discard(stopwatch) }
                 } else {
-                    Button("Discard…") { confirmDiscard = true }
+                    Button("Discard") { confirmDiscard = true }
                         .buttonStyle(.borderless)
                 }
 
