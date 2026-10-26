@@ -60,6 +60,10 @@ class StopwatchStore: ObservableObject {
                     }
                     if let errors = graphQLResult.errors {
                         self.errorMessage = errors.map { $0.message ?? "" }.joined(separator: ", ")
+                    } else {
+                        // A poll that gets through clears what an earlier one left behind, e.g. the
+                        // offline message once the connection is back.
+                        self.errorMessage = nil
                     }
                 case .failure(let error):
                     self.errorMessage = error.localizedDescription
