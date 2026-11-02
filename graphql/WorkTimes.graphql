@@ -1,8 +1,11 @@
-query WorkTimes($userId: ID!, $date: ISO8601Date!) {
+# All of the user's work time profiles: each applies from its activeFrom until the next one starts,
+# so the app picks the one for each day itself — a profile starting mid-week counts from that day.
+query WorkTimes($userId: ID!) {
     users(filter: { ids: [$userId] }) {
         nodes {
-            workTimes(first: 1, filter: { date: $date }) {
+            workTimes(first: 100) {
                 nodes {
+                    activeFrom
                     mon
                     tue
                     wed

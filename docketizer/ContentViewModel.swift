@@ -14,6 +14,12 @@ import Foundation
 typealias DayDurations = [String: Double]
 
 /// Tracked vs. required time for a single day.
+/// A work time profile: hours per weekday ("mon"…"sun"), applying from activeFrom ("YYYY-MM-DD").
+struct WorkTimeProfile: Equatable {
+    let activeFrom: String
+    let hours: [String: Double]
+}
+
 struct DayProgress: Equatable {
     let trackedMinutes: Double
     let targetMinutes: Double
@@ -91,9 +97,10 @@ class ContentViewModel: ObservableObject {
     private var currentWeekDates: [String] = []
     // Week currently shown in the WeekNavigator
     private var displayedWeekStart: Date? = nil
-    // "mon"/"tue"/… → hours; nil while not loaded or if the user has no work times configured
-    private var workTimesPerDay: [String: Double]? = nil
-    // Week start ("YYYY-MM-DD") the work times were requested for, to refetch on week change
+    // The user's work time profiles, latest first; nil while not loaded. A profile applies from its
+    // activeFrom until the next one starts, so each day gets its own (see workHours(for:)).
+    private var workTimeProfiles: [WorkTimeProfile]? = nil
+    // Week start ("YYYY-MM-DD") the work times were last requested for, to refetch on week change
     private var workTimesWeekKey: String? = nil
     private var cancellables = Set<AnyCancellable>()
 
@@ -133,17 +140,19 @@ class ContentViewModel: ObservableObject {
 
     private static let weekdayKeys = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
 
-    private func workHours(for date: Date, in workTimes: [String: Double]) -> Double {
-        let calendar = Calendar.current
+    /// The hours to work on `dateStr` ("YYYY-MM-DD"): from the latest profile active by then, nil
+    /// when no profile applies yet (the day then shows no progress, as in docket).
+    private func workHours(for dateStr: String, date: Date, in profiles: [WorkTimeProfile]) -> Double? {
+        // ISO dates compare correctly as strings; profiles are sorted latest first
+        guard let profile = profiles.first(where: { $0.activeFrom <= dateStr }) else { return nil }
         // Calendar.weekday: 1=Sun, 2=Mon, …, 7=Sat
-        let weekday = calendar.component(.weekday, from: date)
-        let key = Self.weekdayKeys[weekday - 1]
-        return workTimes[key] ?? 0
+        let weekday = Calendar.current.component(.weekday, from: date)
+        return profile.hours[Self.weekdayKeys[weekday - 1]] ?? 0
     }
 
     private func recalculateWeekProgress() {
         // Without work times we can't tell work-free days from untracked ones – show nothing
-        guard let workTimes = workTimesPerDay else {
+        guard let profiles = workTimeProfiles else {
             weekDayProgress = [:]
             return
         }
@@ -151,10 +160,11 @@ class ContentViewModel: ObservableObject {
         var progress: [String: DayProgress] = [:]
         // Iterate the whole week (not only days with entries) so 0h days are known to the UI
         for dateStr in currentWeekDates {
-            guard let date = date(from: dateStr) else { continue }
+            guard let date = date(from: dateStr),
+                  let hours = workHours(for: dateStr, date: date, in: profiles) else { continue }
             progress[dateStr] = DayProgress(
                 trackedMinutes: weekDayDurations[dateStr] ?? 0,
-                targetMinutes: workHours(for: date, in: workTimes) * 60
+                targetMinutes: hours * 60
             )
         }
         weekDayProgress = progress
@@ -247,10 +257,11 @@ class ContentViewModel: ObservableObject {
                 switch result {
                 case .success(let graphQLResult):
                     if let viewer = graphQLResult.data?.viewer {
-                        // Work times can differ over time (activeFrom), so fetch them per week
+                        // Refetched per week so a profile changed in docket shows up; the
+                        // profiles already loaded keep applying meanwhile (they cover every day).
                         if self.workTimesWeekKey != firstDay {
                             self.workTimesWeekKey = firstDay
-                            self.queryWorkTimes(userId: viewer.id, date: firstDay)
+                            self.queryWorkTimes(userId: viewer.id, weekKey: firstDay)
                         }
 
                         // Accumulate durations per day
@@ -273,31 +284,32 @@ class ContentViewModel: ObservableObject {
         }
     }
 
-    public func queryWorkTimes(userId: String, date: String) {
+    public func queryWorkTimes(userId: String, weekKey: String) {
         guard let client = Apollo.shared.client() else { return }
 
-        client.fetch(query: WorkTimesQuery(userId: userId, date: date), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
+        client.fetch(query: WorkTimesQuery(userId: userId), cachePolicy: .fetchIgnoringCacheData) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 // Ignore stale responses if the week changed in the meantime
-                guard self.workTimesWeekKey == date else { return }
+                guard self.workTimesWeekKey == weekKey else { return }
 
                 switch result {
                 case .success(let graphQLResult):
-                    if let workTime = graphQLResult.data?.users.nodes.first?.workTimes.nodes.first {
-                        self.workTimesPerDay = [
-                            "mon": workTime.mon,
-                            "tue": workTime.tue,
-                            "wed": workTime.wed,
-                            "thu": workTime.thu,
-                            "fri": workTime.fri,
-                            "sat": workTime.sat,
-                            "sun": workTime.sun,
-                        ]
-                    } else {
-                        // No work times configured for this user/week
-                        self.workTimesPerDay = nil
-                    }
+                    let nodes = graphQLResult.data?.users.nodes.first?.workTimes.nodes ?? []
+                    // No profile at all: nil, so no day shows progress
+                    self.workTimeProfiles = nodes.isEmpty ? nil : nodes
+                        .map { node in
+                            WorkTimeProfile(activeFrom: node.activeFrom, hours: [
+                                "mon": node.mon,
+                                "tue": node.tue,
+                                "wed": node.wed,
+                                "thu": node.thu,
+                                "fri": node.fri,
+                                "sat": node.sat,
+                                "sun": node.sun,
+                            ])
+                        }
+                        .sorted { $0.activeFrom > $1.activeFrom }
                     self.recalculateWeekProgress()
 
                     if let errors = graphQLResult.errors {

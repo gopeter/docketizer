@@ -7,24 +7,16 @@ public class WorkTimesQuery: GraphQLQuery {
   public static let operationName: String = "WorkTimes"
   public static let operationDocument: ApolloAPI.OperationDocument = .init(
     definition: .init(
-      #"query WorkTimes($userId: ID!, $date: ISO8601Date!) { users(filter: { ids: [$userId] }) { __typename nodes { __typename workTimes(first: 1, filter: { date: $date }) { __typename nodes { __typename mon tue wed thu fri sat sun } } } } }"#
+      #"query WorkTimes($userId: ID!) { users(filter: { ids: [$userId] }) { __typename nodes { __typename workTimes(first: 100) { __typename nodes { __typename activeFrom mon tue wed thu fri sat sun } } } } }"#
     ))
 
   public var userId: ID
-  public var date: ISO8601Date
 
-  public init(
-    userId: ID,
-    date: ISO8601Date
-  ) {
+  public init(userId: ID) {
     self.userId = userId
-    self.date = date
   }
 
-  public var __variables: Variables? { [
-    "userId": userId,
-    "date": date
-  ] }
+  public var __variables: Variables? { ["userId": userId] }
 
   public struct Data: DocketAPI.SelectionSet {
     public let __data: DataDict
@@ -63,10 +55,7 @@ public class WorkTimesQuery: GraphQLQuery {
         public static var __parentType: any ApolloAPI.ParentType { DocketAPI.Objects.User }
         public static var __selections: [ApolloAPI.Selection] { [
           .field("__typename", String.self),
-          .field("workTimes", WorkTimes.self, arguments: [
-            "first": 1,
-            "filter": ["date": .variable("date")]
-          ]),
+          .field("workTimes", WorkTimes.self, arguments: ["first": 100]),
         ] }
 
         public var workTimes: WorkTimes { __data["workTimes"] }
@@ -97,6 +86,7 @@ public class WorkTimesQuery: GraphQLQuery {
             public static var __parentType: any ApolloAPI.ParentType { DocketAPI.Objects.UserWorkTime }
             public static var __selections: [ApolloAPI.Selection] { [
               .field("__typename", String.self),
+              .field("activeFrom", DocketAPI.ISO8601Date.self),
               .field("mon", Double.self),
               .field("tue", Double.self),
               .field("wed", Double.self),
@@ -106,6 +96,7 @@ public class WorkTimesQuery: GraphQLQuery {
               .field("sun", Double.self),
             ] }
 
+            public var activeFrom: DocketAPI.ISO8601Date { __data["activeFrom"] }
             public var mon: Double { __data["mon"] }
             public var tue: Double { __data["tue"] }
             public var wed: Double { __data["wed"] }
