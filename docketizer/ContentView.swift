@@ -434,9 +434,14 @@ extension ContentView {
                 VStack {
                     ForEach(Array(viewModel.timetrackings.enumerated()), id: \.1.id) { index, timetracking in
                         HStack(alignment: .top) {
+                            // Never wraps ("#12" broke into "#1"/"2" at a fixed 20pt); the minimum
+                            // width keeps the titles aligned for numbers up to three digits.
                             Text("#\(timetracking.ticket.number)")
-                                .frame(width: 20, alignment: .leading)
                                 .font(.callout)
+                                .monospacedDigit()
+                                .lineLimit(1)
+                                .fixedSize()
+                                .frame(minWidth: 34, alignment: .leading)
 
                             VStack(alignment: .leading) {
                                 Text("\(timetracking.project.pnr) \(timetracking.project.title)")
