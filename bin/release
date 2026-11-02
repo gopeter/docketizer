@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# Builds a docketizer release into ../docketizer-releases:
+#
+#   bin/release 1.2.2
+#
+# 1. Archives the Release build.
+# 2. With a "Developer ID Application" certificate in the keychain: exports the app for
+#    distribution outside the App Store, has Apple notarize it (keychain profile $NOTARY_PROFILE,
+#    created once with `xcrun notarytool store-credentials`) and staples the ticket, so Gatekeeper
+#    opens it on any Mac. Without one, the app stays signed for development only and Gatekeeper
+#    refuses it on other Macs (the script says so; Sparkle updates of installed copies still work).
+# 3. Zips it (docketizer-<version>.zip) and prints the Sparkle signature for appcast.xml.
+#
+# MARKETING_VERSION / CURRENT_PROJECT_VERSION in the project are bumped by hand before.
+set -euo pipefail
+
+VERSION=${1:?usage: bin/release <version>}
+NOTARY_PROFILE=${NOTARY_PROFILE:-docketizer-notary}
+TEAM_ID=JU865Y955R
+ROOT=$(cd "$(dirname "$0")/.." && pwd)
+OUT=${OUT:-$(cd "$ROOT/.." && pwd)/docketizer-releases}
+WORK=$(mktemp -d)
+ARCHIVE=$WORK/docketizer.xcarchive
+ZIP=$OUT/docketizer-$VERSION.zip
+
+project_version=$(grep -m1 "MARKETING_VERSION" "$ROOT/docketizer.xcodeproj/project.pbxproj" | sed -E 's/.*= ([^;]+);/\1/')
+if [ "$project_version" != "$VERSION" ]; then
+  echo "The project says $project_version, not $VERSION: bump MARKETING_VERSION and CURRENT_PROJECT_VERSION first." >&2
+  exit 1
+fi
+mkdir -p "$OUT"
+[ -e "$ZIP" ] && { echo "$ZIP exists already." >&2; exit 1; }
+
+echo "→ Archiving $VERSION"
+xcodebuild -project "$ROOT/docketizer.xcodeproj" -scheme docketizer -configuration Release \
+  -archivePath "$ARCHIVE" archive -quiet
+
+if security find-identity -v -p codesigning | grep -q "Developer ID Application"; then
+  echo "→ Exporting with Developer ID"
+  cat > "$WORK/ExportOptions.plist" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>method</key><string>developer-id</string>
+  <key>signingStyle</key><string>automatic</string>
+  <key>teamID</key><string>$TEAM_ID</string>
+</dict>
+</plist>
+PLIST
+  xcodebuild -exportArchive -archivePath "$ARCHIVE" -exportOptionsPlist "$WORK/ExportOptions.plist" \
+    -exportPath "$WORK/export" -quiet
+  APP=$WORK/export/docketizer.app
+
+  echo "→ Notarizing (takes a few minutes)"
+  ditto -c -k --keepParent "$APP" "$WORK/notarize.zip"
+  xcrun notarytool submit "$WORK/notarize.zip" --keychain-profile "$NOTARY_PROFILE" --wait \
+    --output-format json > "$WORK/notary.json"
+  status=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["status"])' "$WORK/notary.json")
+  if [ "$status" != "Accepted" ]; then
+    id=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["id"])' "$WORK/notary.json")
+    echo "Notarization: $status. Details: xcrun notarytool log $id --keychain-profile $NOTARY_PROFILE" >&2
+    exit 1
+  fi
+  xcrun stapler staple "$APP"
+  spctl -a -vv -t exec "$APP"
+else
+  APP=$ARCHIVE/Products/Applications/docketizer.app
+  echo "⚠ No Developer ID Application certificate: signed for development only, not notarized." >&2
+  echo "  Gatekeeper refuses this build on other Macs; don't publish it as the download." >&2
+fi
+
+echo "→ Zipping"
+ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
+
+SIGN_UPDATE=$(find "$HOME"/Library/Developer/Xcode/DerivedData/docketizer-*/SourcePackages/artifacts/sparkle/Sparkle/bin \
+  -maxdepth 1 -name sign_update -type f 2>/dev/null | head -1)
+[ -n "$SIGN_UPDATE" ] || { echo "Sparkle's sign_update not found (open the project in Xcode once)." >&2; exit 1; }
+echo "→ $ZIP"
+echo "  appcast <enclosure>: $("$SIGN_UPDATE" "$ZIP")"
+rm -rf "$WORK"
